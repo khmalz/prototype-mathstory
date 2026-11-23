@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F4F7FB">
+  <title>MathPersona PBK — Prototipe Sistem Personalisasi Soal Cerita Matematika</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css" integrity="sha384-WwGtaC6ywCHxA5cstpj/3+xIZvTez8dq2IcBQaXRkenHZ7FVVq1ZROtURwfbtTlG" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.js" integrity="sha384-a1WQdjRj162i159OYq041X6I4K8NenkrI09LlPmiHg0YOb7CR+wJOraXwK9abpnE" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="brand-block">
+          <h1>MathPersona <span translate="no">PBK</span></h1>
+          <p class="subtitle">Simulasi Alur Kendali Berlapis dan <span translate="no">Teacher-in-the-Loop</span> (Kelompok 10, Ilmu Komputer UNJ)</p>
+        </div>
+
+        <div class="mode-switcher" role="tablist" aria-label="Mode Tampilan Aplikasi">
+          <button type="button" id="btn-view-teacher" class="mode-tab is-active" role="tab" aria-selected="true" aria-controls="view-teacher">
+            <span class="btn-icon" data-icon="sliders" aria-hidden="true"></span>
+            <span>Workbench Guru</span>
+          </button>
+          <button type="button" id="btn-view-student" class="mode-tab" role="tab" aria-selected="false" aria-controls="view-student">
+            <span class="btn-icon" data-icon="eye" aria-hidden="true"></span>
+            <span>Mode Pratinjau Siswa</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="preset-bar" role="group" aria-label="Preset Kasus Demo">
+        <span class="preset-bar-label">Preset Demo Proposal:</span>
+        <div class="preset-group">
+          <button type="button" id="preset-case1" class="preset-btn is-active" data-preset="case1">
+            Kasus 1: Linear (Kedai Es Teh)
+          </button>
+          <button type="button" id="preset-case2" class="preset-btn" data-preset="case2">
+            Kasus 2: SPLDV (Roblox)
+          </button>
+          <button type="button" id="preset-case3" class="preset-btn" data-preset="case3">
+            Kasus 3: Geometri SD (PC)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="workflow-stepper" aria-label="Tahapan Alur Sistem PBK">
+    <div class="stepper-inner">
+      <button type="button" class="step-btn is-active" data-stage="1" aria-current="step">
+        <span class="step-num">1</span>
+        <span class="step-text">Input Parameter</span>
+      </button>
+      <button type="button" class="step-btn" data-stage="2">
+        <span class="step-num">2</span>
+        <span class="step-text">Symbolic dan Draf</span>
+      </button>
+      <button type="button" class="step-btn" data-stage="3">
+        <span class="step-num">3</span>
+        <span class="step-text">Evaluasi 4 Agen</span>
+      </button>
+      <button type="button" class="step-btn" data-stage="4">
+        <span class="step-num">4</span>
+        <span class="step-text">Kurasi Guru</span>
+      </button>
+      <button type="button" class="step-btn" data-stage="5">
+        <span class="step-num">5</span>
+        <span class="step-text">Pratinjau Siswa</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="global-notice" class="global-notice" role="status" aria-live="polite" hidden></div>
+
+  <main id="main-content" class="main-shell">
+    <!-- VIEW 1: TEACHER WORKBENCH -->
+    <section id="view-teacher" class="teacher-view" role="tabpanel" aria-labelledby="btn-view-teacher">
+      <div class="workbench-grid">
+        <!-- LEFT COLUMN: MODUL A & MODUL B -->
+        <div class="col-left">
+          <!-- MODUL A: PARAMETER SISTEM -->
+          <section id="panel-input" class="panel" aria-labelledby="heading-input">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Modul A</span>
+                <h2 id="heading-input">Parameter Sistem</h2>
+              </div>
+              <span id="active-preset-chip" class="status-chip chip-neutral">Preset: Kasus 1</span>
+            </div>
+
+            <form id="input-form" class="param-form" novalidate>
+              <div class="field-group">
+                <label for="input-topic">Materi Matematika</label>
+                <select id="input-topic" name="topic">
+                  <option value="linear">Fungsi Linear Dua Langkah (y = c ± mx)</option>
+                  <option value="spldv">SPLDV (Sistem Persamaan Linear Dua Variabel)</option>
+                  <option value="geometry">Geometri Luas Bangun Gabungan</option>
+                </select>
+              </div>
+
+              <!-- DYNAMIC PARAMS: LINEAR -->
+              <fieldset id="fields-linear" class="param-fieldset">
+                <legend>Parameter Fungsi Linear</legend>
+                <div class="form-grid form-grid-3">
+                  <div class="field-group">
+                    <label for="lin-c">Nilai Awal (c)</label>
+                    <input type="text" id="lin-c" name="lin_c" inputmode="decimal" autocomplete="off" placeholder="25000…">
+                  </div>
+                  <div class="field-group">
+                    <label for="lin-m">Laju / Harga (m)</label>
+                    <input type="text" id="lin-m" name="lin_m" inputmode="decimal" autocomplete="off" placeholder="3000…">
+                  </div>
+                  <div class="field-group">
+                    <label for="lin-x">Jumlah Satuan (x)</label>
+                    <input type="text" id="lin-x" name="lin_x" inputmode="decimal" autocomplete="off" placeholder="4…">
+                  </div>
+                </div>
+                <div class="form-grid form-grid-2">
+                  <div class="field-group">
+                    <label for="lin-op">Operasi Rumus</label>
+                    <select id="lin-op" name="lin_op">
+                      <option value="-">Pengurangan (y = c − mx)</option>
+                      <option value="+">Penambahan (y = mx + c)</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="lin-currency">Mata Uang</label>
+                    <select id="lin-currency" name="lin_currency">
+                      <option value="Rp">Rupiah (Rp)</option>
+                      <option value="$">Dolar AS ($)</option>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- DYNAMIC PARAMS: SPLDV -->
+              <fieldset id="fields-spldv" class="param-fieldset" hidden>
+                <legend>Koefisien SPLDV (a₁x + b₁y = c₁ dan a₂x + b₂y = c₂)</legend>
+                <div class="spldv-row-label">Persamaan 1</div>
+                <div class="form-grid form-grid-3">
+                  <div class="field-group">
+                    <label for="spldv-a1">Koefisien a₁</label>
+                    <input type="text" id="spldv-a1" name="spldv_a1" inputmode="decimal" autocomplete="off" placeholder="1…">
+                  </div>
+                  <div class="field-group">
+                    <label for="spldv-b1">Koefisien b₁</label>
+                    <input type="text" id="spldv-b1" name="spldv_b1" inputmode="decimal" autocomplete="off" placeholder="1…">
+                  </div>
+                  <div class="field-group">
+                    <label for="spldv-c1">Total c₁</label>
+                    <input type="text" id="spldv-c1" name="spldv_c1" inputmode="decimal" autocomplete="off" placeholder="40…">
+                  </div>
+                </div>
+                <div class="spldv-row-label">Persamaan 2</div>
+                <div class="form-grid form-grid-3">
+                  <div class="field-group">
+                    <label for="spldv-a2">Koefisien a₂</label>
+                    <input type="text" id="spldv-a2" name="spldv_a2" inputmode="decimal" autocomplete="off" placeholder="2…">
+                  </div>
+                  <div class="field-group">
+                    <label for="spldv-b2">Koefisien b₂</label>
+                    <input type="text" id="spldv-b2" name="spldv_b2" inputmode="decimal" autocomplete="off" placeholder="5…">
+                  </div>
+                  <div class="field-group">
+                    <label for="spldv-c2">Total c₂</label>
+                    <input type="text" id="spldv-c2" name="spldv_c2" inputmode="decimal" autocomplete="off" placeholder="140…">
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- DYNAMIC PARAMS: GEOMETRY -->
+              <fieldset id="fields-geometry" class="param-fieldset" hidden>
+                <legend>Input Sensor Konteks Nyata (TensorFlow Lite &amp; Google ARCore)</legend>
+                <div class="form-grid form-grid-2">
+                  <div class="field-group">
+                    <label for="geo-preset">Preset Objek Nyata</label>
+                    <select id="geo-preset" name="geo_preset">
+                      <option value="pc_keyboard">Unit PC dan Keyboard</option>
+                      <option value="buku_tablet">Buku Paket dan Tablet</option>
+                      <option value="meja_laci">Meja Belajar dan Laci Samping</option>
+                      <option value="matras_tas">Matras Latihan dan Tas Futsal</option>
+                      <option value="custom">Objek Kustom</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="geo-unit">Satuan Pengukuran Awal</label>
+                    <select id="geo-unit" name="geo_unit">
+                      <option value="m">Meter (m)</option>
+                      <option value="cm">Sentimeter (cm)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-3">
+                  <div class="field-group">
+                    <label for="geo-obj1">Nama Objek 1</label>
+                    <input type="text" id="geo-obj1" name="geo_obj1" autocomplete="off" placeholder="Unit PC…">
+                  </div>
+                  <div class="field-group">
+                    <label for="geo-p1">Panjang p₁</label>
+                    <input type="text" id="geo-p1" name="geo_p1" inputmode="decimal" autocomplete="off" placeholder="0,51…">
+                  </div>
+                  <div class="field-group">
+                    <label for="geo-l1">Lebar l₁</label>
+                    <input type="text" id="geo-l1" name="geo_l1" inputmode="decimal" autocomplete="off" placeholder="0,36…">
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-3">
+                  <div class="field-group">
+                    <label for="geo-obj2">Nama Objek 2</label>
+                    <input type="text" id="geo-obj2" name="geo_obj2" autocomplete="off" placeholder="Keyboard…">
+                  </div>
+                  <div class="field-group">
+                    <label for="geo-p2">Panjang p₂</label>
+                    <input type="text" id="geo-p2" name="geo_p2" inputmode="decimal" autocomplete="off" placeholder="0,41…">
+                  </div>
+                  <div class="field-group">
+                    <label for="geo-l2">Lebar l₂</label>
+                    <input type="text" id="geo-l2" name="geo_l2" inputmode="decimal" autocomplete="off" placeholder="0,15…">
+                  </div>
+                </div>
+
+                <label class="checkbox-label" for="geo-convert-cm">
+                  <input type="checkbox" id="geo-convert-cm" name="geo_convert_cm">
+                  <span>Aktifkan pembulatan dan konversi ke cm untuk SD</span>
+                </label>
+              </fieldset>
+
+              <!-- INTEREST & PEDAGOGICAL PARAMS -->
+              <fieldset class="param-fieldset">
+                <legend>Profil Minat Granular dan Parameter Pedagogis</legend>
+                <div class="form-grid form-grid-2">
+                  <div class="field-group">
+                    <label for="input-hobby-preset">Skenario Minat Siswa</label>
+                    <select id="input-hobby-preset" name="hobby_preset">
+                      <option value="joes_juice_bar">Kedai Es Teh Nusantara (Kuliner Minuman)</option>
+                      <option value="roblox">Roblox (Gim Daring)</option>
+                      <option value="pc_keyboard">Perangkat Komputer Meja (PC dan Keyboard)</option>
+                      <option value="futsal">Futsal dan Sepak Bola Sekolah</option>
+                      <option value="kpop">Konser Musik Indonesia</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="input-hobby-keyword">Kata Kunci Minat Spesifik</label>
+                    <input type="text" id="input-hobby-keyword" name="hobby_keyword" autocomplete="off" placeholder="Contoh: Kedai Es Teh Nusantara, Futsal…">
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-4">
+                  <div class="field-group">
+                    <label for="input-student-name">Nama Murid</label>
+                    <input type="text" id="input-student-name" name="student_name" autocomplete="off" placeholder="Contoh: Raka, Budi…">
+                  </div>
+                  <div class="field-group">
+                    <label for="input-grade">Jenjang</label>
+                    <select id="input-grade" name="grade">
+                      <option value="SD">SD (Kelas 4–6)</option>
+                      <option value="SMP7">SMP (Kelas 7 — Pembaca Pemula)</option>
+                      <option value="SMP">SMP (Kelas 8–9)</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="input-difficulty">Kesulitan</label>
+                    <select id="input-difficulty" name="difficulty">
+                      <option value="Easy">Mudah (Easy)</option>
+                      <option value="Intermediate">Menengah (Intermediate)</option>
+                      <option value="Advanced">Lanjutan (Advanced)</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="input-max-words">Batas Kata</label>
+                    <input type="number" id="input-max-words" name="max_words" min="20" max="200" inputmode="numeric" autocomplete="off">
+                  </div>
+                </div>
+
+                <label class="checkbox-label" for="input-scaffolding">
+                  <input type="checkbox" id="input-scaffolding" name="scaffolding">
+                  <span>Tampilkan rumus eksplisit di soal (untuk pembaca pemula)</span>
+                </label>
+              </fieldset>
+
+              <div class="form-actions">
+                <button type="button" id="btn-generate" class="btn btn-primary btn-full">
+                  <span class="btn-icon" data-icon="sparkles" aria-hidden="true"></span>
+                  <span>Bangkitkan Ulang Draf</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- MODUL B: SYMBOLIC GROUNDING & CONSTRAINT PROMPT -->
+          <section id="panel-symbolic" class="panel symbolic-panel" aria-labelledby="heading-symbolic">
+            <div class="panel-header symbolic-header">
+              <div class="panel-title-group">
+                <span class="module-tag module-tag-dark">Modul B</span>
+                <h2 id="heading-symbolic">Penjangkaran Simbolik &amp; Prompt Kendala</h2>
+              </div>
+              <div class="code-tabs" role="tablist" aria-label="Tahap Pemrosesan Langkah A dan B">
+                <button type="button" id="tab-step-a" class="code-tab is-active" role="tab" aria-selected="true" aria-controls="pane-step-a">
+                  Langkah A: Kode Python
+                </button>
+                <button type="button" id="tab-step-b" class="code-tab" role="tab" aria-selected="false" aria-controls="pane-step-b">
+                  Langkah B: Prompt Kendala
+                </button>
+              </div>
+            </div>
+
+            <div class="formula-strip">
+              <span class="formula-label">Model Matematis:</span>
+              <div id="symbolic-formula" class="formula-render" translate="no"></div>
+            </div>
+
+            <div id="pane-step-a" role="tabpanel" aria-labelledby="tab-step-a">
+              <pre class="code-block" translate="no"><code id="symbolic-code"></code></pre>
+            </div>
+
+            <div id="pane-step-b" role="tabpanel" aria-labelledby="tab-step-b" hidden>
+              <pre class="code-block prompt-block"><code id="constraint-prompt-code"></code></pre>
+            </div>
+
+            <div class="symbolic-footer">
+              <span class="symbolic-answer-label">Kunci Jawaban Simbolik:</span>
+              <strong id="symbolic-answer" class="symbolic-answer-value" translate="no">—</strong>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN: MODUL C & MODUL D -->
+        <div class="col-right">
+          <!-- MODUL C: EVALUASI 4 AGEN OTONOM -->
+          <section id="panel-agents" class="panel" aria-labelledby="heading-agents">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Modul C</span>
+                <h2 id="heading-agents">Evaluasi 4 Agen Otonom</h2>
+              </div>
+              <div class="agents-meta">
+                <span id="agents-summary" class="status-chip chip-pass">4/4 Lulus</span>
+                <span id="refinement-iteration" class="status-chip chip-neutral">Iterasi 1 / 5</span>
+              </div>
+            </div>
+
+            <div id="agents-grid" class="agents-grid" aria-live="polite">
+              <!-- Populated dynamically by script.js -->
+            </div>
+
+            <div class="refinement-bar">
+              <div class="refinement-info">
+                <span class="refinement-title">Siklus Perbaikan Otomatis (<span translate="no">Refinement Agent</span>)</span>
+                <span id="refinement-hint" class="refinement-hint">Semua agen telah lulus validasi.</span>
+              </div>
+              <button type="button" id="btn-refine" class="btn btn-accent">
+                <span class="btn-icon" data-icon="refresh" aria-hidden="true"></span>
+                <span>Jalankan Refinement Agent</span>
+              </button>
+            </div>
+
+            <div id="refinement-log" class="refinement-log" aria-live="polite" hidden>
+              <h3 class="refinement-log-title">Catatan Perbaikan Agen</h3>
+              <ul id="refinement-log-list" class="refinement-log-list"></ul>
+            </div>
+          </section>
+
+          <!-- MODUL D: KURASI GURU -->
+          <section id="panel-curation" class="panel" aria-labelledby="heading-curation">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Modul D</span>
+                <h2 id="heading-curation">Kurasi Guru (<span translate="no">Teacher-in-the-Loop</span>)</h2>
+              </div>
+              <span id="editor-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
+            </div>
+
+            <div id="curation-banner" class="curation-banner is-verified" role="status" aria-live="polite">
+              <span class="banner-icon" id="curation-banner-icon" aria-hidden="true"></span>
+              <span id="curation-banner-text">Terverifikasi — Soal siap diterbitkan ke mode siswa.</span>
+            </div>
+
+            <div class="epistemic-toolbar" role="group" aria-label="Aksi Cepat Kurasi Guru">
+              <span class="toolbar-label">Aksi Cepat:</span>
+              <button type="button" id="btn-ep-name" class="btn btn-chip">
+                <span class="btn-icon" data-icon="user" aria-hidden="true"></span>
+                <span>Ganti Nama Murid</span>
+              </button>
+              <button type="button" id="btn-ep-price" class="btn btn-chip">
+                <span class="btn-icon" data-icon="coins" aria-hidden="true"></span>
+                <span>Ubah Harga (+Rp1.000)</span>
+              </button>
+              <button type="button" id="btn-ep-scale" class="btn btn-chip">
+                <span class="btn-icon" data-icon="layers" aria-hidden="true"></span>
+                <span id="btn-ep-scale-label">Uji Salah Ketik Nol (Rp)</span>
+              </button>
+            </div>
+
+            <div class="field-group">
+              <label for="teacher-editor">Teks Soal Cerita (dapat disunting langsung oleh guru)</label>
+              <textarea id="teacher-editor" name="teacher_editor" rows="6" spellcheck="false" autocomplete="off"></textarea>
+            </div>
+
+            <div class="curation-actions">
+              <button type="button" id="btn-reverify" class="btn btn-secondary">
+                <span class="btn-icon" data-icon="shieldCheck" aria-hidden="true"></span>
+                <span>Verifikasi Ulang</span>
+              </button>
+              <button type="button" id="btn-publish" class="btn btn-primary">
+                <span class="btn-icon" data-icon="eye" aria-hidden="true"></span>
+                <span>Terbitkan ke Mode Siswa</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: STUDENT EXERCISE VIEW -->
+    <section id="view-student" class="student-view" role="tabpanel" aria-labelledby="btn-view-student" hidden>
+      <div class="student-shell">
+        <div class="student-topbar">
+          <button type="button" id="btn-back-teacher" class="btn btn-ghost">
+            <span class="btn-icon" data-icon="arrowLeft" aria-hidden="true"></span>
+            <span>Kembali ke Workbench Guru</span>
+          </button>
+          <div id="student-chips" class="student-chips"></div>
+        </div>
+
+        <article class="student-card" aria-labelledby="student-heading">
+          <div class="student-card-header">
+            <span class="module-tag">Lembar Latihan Siswa</span>
+            <h2 id="student-heading">Selesaikan Soal Cerita Berikut</h2>
+          </div>
+
+          <p id="student-problem-text" class="student-problem-text"></p>
+
+          <div id="student-scaffolding" class="student-scaffolding" hidden>
+            <div class="scaffolding-title">Bantuan Rumus (<span translate="no">Scaffolding</span>)</div>
+            <div id="student-scaffolding-formula" class="scaffolding-formula" translate="no"></div>
+          </div>
+
+          <form id="student-answer-form" class="student-answer-form" novalidate>
+            <div class="student-inputs-row">
+              <div class="field-group student-input-field">
+                <label id="student-label-1" for="student-input-1">Jawaban Anda</label>
+                <input type="text" id="student-input-1" name="student_answer_1" inputmode="decimal" autocomplete="off" placeholder="Masukkan angka jawaban…">
+              </div>
+
+              <div id="student-input-2-wrap" class="field-group student-input-field" hidden>
+                <label id="student-label-2" for="student-input-2">Nilai y</label>
+                <input type="text" id="student-input-2" name="student_answer_2" inputmode="decimal" autocomplete="off" placeholder="Masukkan nilai y…">
+              </div>
+            </div>
+
+            <div class="student-submit-row">
+              <button type="submit" id="btn-check-answer" class="btn btn-primary">
+                <span class="btn-icon" data-icon="check" aria-hidden="true"></span>
+                <span>Periksa Jawaban</span>
+              </button>
+              <button type="button" id="btn-reset-answer" class="btn btn-ghost">
+                <span>Ulangi Jawaban</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="student-feedback" class="student-feedback" role="status" aria-live="polite" hidden></div>
+
+          <div id="student-steps" class="student-steps" hidden>
+            <h3>Langkah Penyelesaian Simbolik</h3>
+            <ol id="student-steps-list" class="student-steps-list"></ol>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <p class="footer-title">
+        <strong>Kelompok 10 — Program Studi Ilmu Komputer, FMIPA Universitas Negeri Jakarta (2026)</strong>
+      </p>
+      <p class="footer-meta">
+        Disusun oleh: Ananda Giwank Abhinaya (1313624038), Khairul Akmal (1313624017), Sayyied Ridho Arhami (1313624065) — Dosen Pengampu: Dr. Ria Arafiyah, M.Si.
+      </p>
+      <p class="footer-note">
+        Simulasi deterministik alur kendali empat lapis Bab 3 Proposal (Input Terstruktur, Penjangkaran Simbolik &amp; Prompt Kendala, Evaluasi Multi-Agen + Refinement, dan Kurasi Guru).
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

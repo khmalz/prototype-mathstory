@@ -1,42 +1,40 @@
 # MathPersona PBK
 
-Prototipe web statis **Sistem Pengajaran Berbantuan Komputer (PBK) Berbasis Kendali Berlapis untuk Mengubah Rumus Matematika Menjadi Soal Cerita Sesuai Kegemaran Siswa**.
+Aplikasi web statis untuk mengubah rumus matematika jadi soal cerita sesuai hobi siswa — lengkap dengan cek kualitas otomatis, edit manual guru, dan mode latihan siswa.
 
 ---
 
 ## Fitur Utama
 
-Prototipe ini mensimulasikan secara deterministik (100% *client-side* tanpa API AI eksternal) arsitektur kendali empat lapis:
+Aplikasi ini jalan **100% di browser** tanpa API AI eksternal atau server backend:
 
-1. **Modul A — Input Terstruktur & Sensor Konteks Nyata**
-   - Mendukung 3 materi: **Fungsi Linear Dua Langkah** (`y = c ± mx`), **SPLDV**, dan **Geometri Luas Bangun Gabungan**.
-   - Profil minat granular siswa (dropdown skenario hobi + kata kunci bebas), jenjang (`SD`, `SMP Kelas 7 Pembaca Pemula`, `SMP Kelas 8–9`), tingkat kesulitan, batas kata, *scaffolding* rumus, serta simulasi input sensor **TensorFlow Lite & Google ARCore**.
-2. **Modul B — Penjangkaran Simbolik & Prompt Kendala**
-   - **Langkah A (`Kode Python`):** Memetakan variabel matematis ke kode Python *read-only* lengkap dengan kunci jawaban simbolik.
-   - **Langkah B (`Prompt Kendala`):** Menampilkan *instructional-based prompt* terstruktur (`Peran`, `Tugas`, `Aturan khusus`, SNI, dan batas kata).
-3. **Modul C — Evaluasi 4 Agen Otonom & Refinement Agent**
-   - Penilaian biner (`LULUS` / `GAGAL`) oleh **Mathematical Accuracy Agent**, **Realism Agent**, **Authenticity Agent**, dan **Reading-Level & SNI Agent** (termasuk deteksi angka dekoratif).
-   - **Refinement Agent** memperbaiki isu secara otomatis hingga maksimal 5 iterasi disertai log revisi.
-4. **Modul D — Kurasi Guru (*Teacher-in-the-Loop*)**
-   - Editor soal interaktif dengan aksi cepat (*Ganti Nama Murid*, *Ubah Harga (+Rp1.000)*, *Uji Salah Ketik Nol (Rp)* / *Skala Rupiah Wajar*).
-   - Deteksi perubahan angka atau mata uang secara *real-time* yang mengunci penerbitan hingga guru menekan **Verifikasi Ulang**.
-5. **Modul E — Mode Pratinjau Siswa**
-   - Tampilan lembar latihan bersih, bantuan rumus opsional (KaTeX + fallback offline), pengecekan jawaban fleksibel (`Rp13.000`, `13000`, `0,2451`), dan langkah penyelesaian simbolik.
+1. **Atur Soal & Minat (Modul A)**
+   - Mendukung 3 materi: **Fungsi Linear** (`y = c ± mx`), **SPLDV**, dan **Geometri (Luas Gabungan)**.
+   - Bisa pilih hobi/topik spesifik (plus ketik kata kunci sendiri), atur jenjang (`SD`, `SMP Kelas 7 Pemula`, `SMP Kelas 8–9`), level soal, batas kata, rumus bantuan, dan ukuran benda dari simulasi sensor **TensorFlow Lite & Google ARCore**.
+2. **Rumus Kunci & Aturan Soal (Modul B)**
+   - **Kode Python:** Mengunci hitungan angka di kode Python biar jawaban nggak meleset.
+   - **Aturan Prompt:** Menampilkan aturan pembuatan soal cerita (target kelas, kata kunci hobi, larangan angka pengecoh/SNI, dan batas kata).
+3. **Cek Kualitas Otomatis — 4 Agen (Modul C)**
+   - Mengecek soal dengan status `LULUS` / `GAGAL` lewat 4 agen: **Cek Hitungan (Accuracy)**, **Cek Masuk Akal (Realism)**, **Cek Hobi (Authenticity)**, dan **Cek Bahasa & SNI (Reading-Level)**.
+   - Tombol **Perbaiki Otomatis** (*Refinement Agent*) otomatis membenahi soal yang gagal sampai maksimal 5 kali revisi.
+4. **Edit Guru (Modul D)**
+   - Guru bebas edit teks soal secara manual atau pakai tombol cepat (*Ganti Nama Siswa*, *Naikkan Harga*, *Tes Salah Ketik Nol*).
+   - Kalau ada angka atau mata uang yang diubah, sistem otomatis mengunci akses ke Mode Siswa sampai guru klik **Cek Ulang**.
+5. **Mode Siswa (Tahap 5)**
+   - Tampilan latihan yang bersih buat siswa, lengkap dengan rumus bantuan opsional, cek jawaban fleksibel (`Rp13.000`, `13000`, `0,2451`), dan langkah cara ngerjainnya.
 
-## 3 Preset Kasus Demo
+## 3 Contoh Kasus Siap Demo
 
-- **Kasus 1 — Aljabar Linear (`Kedai Es Teh Nusantara`):** Simulasi *scaffolding* untuk SMP Kelas 7 (`Rp25.000`, `Rp3.000`, `x = 4` → `Rp13.000`) dan demo deteksi ketidakwajaran nominal oleh *Realism Agent*.
-- **Kasus 2 — SPLDV (`Roblox`):** Mendemonstrasikan 3 kegagalan awal (*solusi simetris*, *generik & entitas ambigu*, *informasi implisit*) lalu diperbaiki otomatis oleh *Refinement Agent* (`x = 15, y = 25`).
-- **Kasus 3 — Geometri Luas Gabungan (`Unit PC & Keyboard`):** Mendemonstrasikan penolakan beban 4 desimal untuk siswa SD (`0,2451 m²`) dan penegasan sisi alas ARCore, lalu konversi ke sentimeter bulat (`2451 cm²`).
+- **Kasus 1 — Linear (`Kedai Es Teh Nusantara`):** Soal cerita dengan rumus bantuan buat SMP Kelas 7 (`Rp25.000`, `Rp3.000`, `x = 4` → `Rp13.000`) plus demo cek nominal Rupiah yang nggak wajar.
+- **Kasus 2 — SPLDV (`Roblox`):** Awalnya sengaja punya 3 masalah (jawaban kembar `x = y = 20`, istilah umum `"game online"` & `"peti emas"`/`"koin emas"`, dan aturan tantangan yang belum ditulis), lalu dibenerin otomatis jadi `x = 15, y = 25`.
+- **Kasus 3 — Geometri SD (`Unit PC & Keyboard`):** Awalnya ditolak karena pakai 4 angka di belakang koma (`0,2451 m²`) buat anak SD, lalu dikonversi otomatis ke sentimeter bulat (`2451 cm²`).
 
 ---
 
-## Cara Menjalankan Secara Lokal
+## Cara Menjalankan
 
-Aplikasi berjalan **100% statis** tanpa *build tools* maupun server backend:
-
-1. Buka langsung file `index.html` di browser (`file://`), atau
-2. Jalankan server statis lokal opsional:
+1. Buka langsung file `index.html` di browser, atau
+2. Jalankan server lokal opsional:
    ```bash
    python -m http.server 8000
    ```
@@ -48,8 +46,8 @@ Aplikasi berjalan **100% statis** tanpa *build tools* maupun server backend:
 
 ```text
 .
-├── index.html      # Struktur semantik Workbench Guru (Modul A–D) dan Mode Siswa (Modul E)
-├── style.css       # Design system Academic Math Studio, responsif, WCAG-compliant
-├── script.js       # State store, Math & Template Engine, 4 Evaluator Agents, Refinement, Kurasi
-└── PLAN.md         # Rencana arsitektur dan implementasi
+├── index.html      # Tampilan utama (Mode Per Langkah, Lihat Semua, dan Mode Siswa)
+├── style.css       # Desain antarmuka responsif dan ramah proyektor
+├── script.js       # Logika hitung, template soal, 4 agen cek, perbaikan otomatis, dan mode siswa
+└── PLAN.md         # Rencana implementasi awal
 ```

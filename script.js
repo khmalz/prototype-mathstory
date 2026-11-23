@@ -133,34 +133,34 @@
   };
 
   const TOPIC_LABELS = {
-    linear: 'Fungsi Linear Dua Langkah',
+    linear: 'Fungsi Linear',
     spldv: 'SPLDV',
     geometry: 'Geometri Luas Gabungan'
   };
 
   const PRESET_LABELS = {
-    case1: 'Preset: Kasus 1',
-    case2: 'Preset: Kasus 2',
-    case3: 'Preset: Kasus 3',
-    custom: 'Mode Kustom'
+    case1: 'Contoh: Kasus 1',
+    case2: 'Contoh: Kasus 2',
+    case3: 'Contoh: Kasus 3',
+    custom: 'Atur Sendiri'
   };
 
   const PRESET_DESCRIPTIONS = {
     case1: {
-      title: 'Kasus 1 — Aljabar Linear Dua Langkah (Kedai Es Teh Nusantara)',
-      desc: 'Skenario dengan scaffolding rumus eksplisit untuk SMP Kelas 7 pembaca pemula dan simulasi kurasi guru terhadap nominal Rupiah.'
+      title: 'Kasus 1 — Fungsi Linear (Kedai Es Teh Nusantara)',
+      desc: 'Contoh soal dengan rumus bantuan buat SMP Kelas 7 pemula, sekaligus simulasi guru ngecek harga Rupiah yang salah ketik nol.'
     },
     case2: {
-      title: 'Kasus 2 — SPLDV (Roblox: Deteksi Celah & Refinement)',
-      desc: 'Draf awal sengaja memuat 3 celah (solusi simetris, istilah generik & ambigu, serta informasi implisit) untuk ditangkap 4 Agen Evaluator dan diperbaiki otomatis.'
+      title: 'Kasus 2 — SPLDV (Roblox: Deteksi Celah & Perbaikan Otomatis)',
+      desc: 'Sengaja mulai dengan 3 masalah (jawaban kembar, istilah terlalu umum & bikin bingung, plus aturan yang belum ditulis) biar kelihatan gimana 4 agen ngecek dan benerin otomatis.'
     },
     case3: {
       title: 'Kasus 3 — Geometri Luas Gabungan (Sensor ARCore SD)',
-      desc: 'Menampilkan penolakan Realism Agent terhadap beban 4 desimal (0,2451 m²) bagi siswa SD serta penegasan sisi alas sebelum dikonversi ke satuan cm.'
+      desc: 'Nunjukin penolakan kalau angka buat anak SD kebanyakan koma (0,2451 m²) dan belum jelas bagian alasnya, lalu diubah ke cm bulat.'
     },
     custom: {
-      title: 'Skenario Kustom — Parameter & Minat Bebas',
-      desc: 'Sistem menghitung kunci simbolik, menyusun Prompt Kendala, dan memvalidasi soal sesuai parameter serta kata kunci minat yang Anda tentukan.'
+      title: 'Mode Bebas — Atur Angka & Hobi Sendiri',
+      desc: 'Sistem otomatis ngitung jawaban benar, bikin aturan soalnya, dan ngecek kualitas soal sesuai angka serta hobi yang Anda isi.'
     }
   };
 
@@ -426,7 +426,7 @@
 
   function getGradeLabel(grade) {
     if (grade === 'SD') return 'SD (Kelas 4–6)';
-    if (grade === 'SMP7') return 'SMP Kelas 7 (Pembaca Pemula)';
+    if (grade === 'SMP7') return 'SMP Kelas 7 (Pemula)';
     return 'SMP (Kelas 8–9)';
   }
 
@@ -477,18 +477,18 @@
     }
 
     const lines = [
-      'Peran: bertindak sebagai perancang soal matematika instruksional untuk ' + gradeText + '.',
-      'Tugas: mengubah persamaan {' + formulaText + '} menjadi soal cerita yang berpusat pada minat "' + keyword + '" dengan tingkat kesulitan ' + input.difficulty + '.',
+      'Peran: Kamu adalah pembuat soal matematika untuk siswa ' + gradeText + '.',
+      'Tugas: Ubah rumus {' + formulaText + '} jadi soal cerita tentang "' + keyword + '" dengan level ' + input.difficulty + '.',
       '',
-      'Aturan khusus:',
-      '1) Memakai seluruh parameter numerik yang sudah dipetakan, yaitu {' + varText + '}.',
-      '2) Tidak memasukkan angka dekoratif yang membingungkan, sesuai prinsip Significant Number Identification (SNI).',
-      '3) Memastikan satuan dan rentang angka masuk akal di dunia hobi tersebut (item diskret bulat positif dan nominal wajar).',
-      '4) Membatasi panjang teks maksimal ' + input.maxWords + ' kata.'
+      'Aturan wajib:',
+      '1) Pakai semua angka ini di cerita: {' + varText + '}.',
+      '2) Jangan tambah angka pengecoh/dekoratif di luar rumus (aturan SNI).',
+      '3) Pastikan satuan dan harganya masuk akal (barang nggak boleh pecahan, nominal Rupiah wajar).',
+      '4) Panjang soal maksimal ' + input.maxWords + ' kata.'
     ];
 
     if (input.topic === 'geometry' && isSDGrade(input.grade)) {
-      lines.push('5) Untuk jenjang SD, tegaskan pengukuran pada sisi alas (tapak objek) dan gunakan satuan bulat (cm) agar bebas desimal rumit.');
+      lines.push('5) Khusus anak SD, jelaskan yang diukur itu sisi alas (tapak benda) dan pakai cm bulat biar nggak kebanyakan koma.');
     }
 
     return lines.join('\n');
@@ -571,10 +571,10 @@
         : 'y = ' + mTex + 'x + ' + cTex;
 
       const codeHtml = [
-        pyComment('Jangkar Simbolik - Fungsi Linear (' + keyword + ')'),
-        'c = ' + pyNum(formatPlainNumber(c, 2)) + '  ' + pyComment('nilai awal ' + cfg.linearContainer + ' (' + cStr + ')'),
-        'm = ' + pyNum(formatPlainNumber(m, 2)) + '  ' + pyComment('laju per ' + cfg.linearItem + ' (' + mStr + ')'),
-        'x = ' + pyNum(formatPlainNumber(x, 2)) + '  ' + pyComment('jumlah satuan yang dibeli/diproses'),
+        pyComment('Rumus Kunci - Fungsi Linear (' + keyword + ')'),
+        'c = ' + pyNum(formatPlainNumber(c, 2)) + '  ' + pyComment('saldo awal ' + cfg.linearContainer + ' (' + cStr + ')'),
+        'm = ' + pyNum(formatPlainNumber(m, 2)) + '  ' + pyComment('harga/perubahan per ' + cfg.linearItem + ' (' + mStr + ')'),
+        'x = ' + pyNum(formatPlainNumber(x, 2)) + '  ' + pyComment('jumlah yang dibeli/dipakai'),
         pyKw('def') + ' ' + pyFn(fnName) + '(c, m, x):',
         '    ' + pyKw('return') + ' ' + exprText,
         '',
@@ -583,14 +583,14 @@
 
       const multVal = valid ? roundTo(m * x, 4) : NaN;
       const steps = valid ? [
-        'Diketahui: nilai awal (c) = ' + cStr + ', laju per satuan (m) = ' + mStr + ', dan jumlah satuan (x) = ' + formatIdNumber(x, 2, false) + '.',
-        'Model matematika: ' + (op === '-' ? 'y = c − m · x' : 'y = m · x + c') + '.',
-        'Substitusi nilai x = ' + formatIdNumber(x, 2, false) + ': y = ' +
+        'Yang diketahui: nilai awal (c) = ' + cStr + ', harga/laju (m) = ' + mStr + ', dan jumlah (x) = ' + formatIdNumber(x, 2, false) + '.',
+        'Rumusnya: ' + (op === '-' ? 'y = c − m × x' : 'y = m × x + c') + '.',
+        'Masukkan x = ' + formatIdNumber(x, 2, false) + ': y = ' +
           (op === '-'
             ? formatCurrency(c, curr) + ' − (' + formatCurrency(m, curr) + ' × ' + formatIdNumber(x, 2, false) + ') = ' + formatCurrency(c, curr) + ' − ' + formatCurrency(multVal, curr)
             : '(' + formatCurrency(m, curr) + ' × ' + formatIdNumber(x, 2, false) + ') + ' + formatCurrency(c, curr) + ' = ' + formatCurrency(multVal, curr) + ' + ' + formatCurrency(c, curr)) + '.',
-        'Hasil akhir: y = ' + yStr + '.'
-      ] : ['Parameter numerik belum lengkap atau tidak valid.'];
+        'Jadi hasilnya: y = ' + yStr + '.'
+      ] : ['Angkanya belum lengkap atau ada yang nggak valid nih.'];
 
       return {
         codeHtml: codeHtml,
@@ -634,12 +634,12 @@
 
       const solDisplay = hasUnique
         ? 'x = ' + formatIdNumber(x, 2, false) + ', y = ' + formatIdNumber(y, 2, false)
-        : 'Tidak ada solusi unik (D = 0)';
+        : 'Nggak ketemu solusi unik (D = 0)';
 
       const codeHtml = [
-        pyComment('Jangkar Simbolik - SPLDV (' + keyword + ')'),
+        pyComment('Rumus Kunci - SPLDV (' + keyword + ')'),
         'a1, b1, c1 = ' + pyNum(a1) + ', ' + pyNum(b1) + ', ' + pyNum(c1) + '  ' + pyComment('total ' + itemXLabel + ' & ' + itemYLabel),
-        'a2, b2, c2 = ' + pyNum(a2) + ', ' + pyNum(b2) + ', ' + pyNum(c2) + '  ' + pyComment('bobot ' + cfg.spldvReward),
+        'a2, b2, c2 = ' + pyNum(a2) + ', ' + pyNum(b2) + ', ' + pyNum(c2) + '  ' + pyComment('nilai ' + cfg.spldvReward),
         pyKw('def') + ' ' + pyFn('pecahkan_spldv') + '(a1, b1, c1, a2, b2, c2):',
         '    D = (a1 * b2) - (a2 * b1)',
         '    ' + pyKw('if') + ' D == ' + pyNum(0) + ': ' + pyKw('return') + ' ' + pyStr('Determinan nol'),
@@ -651,12 +651,12 @@
       ].map(pyLine).join('\n');
 
       const steps = hasUnique ? [
-        'Misalkan x = banyak ' + itemXLabel + ' dan y = banyak ' + itemYLabel + '.',
-        'Susun model SPLDV: (1) ' + eq1Latex + ' dan (2) ' + eq2Latex + '.',
-        'Hitung determinan matriks koefisien: D = (' + a1 + ' × ' + b2 + ') − (' + a2 + ' × ' + b1 + ') = ' + D + '.',
-        'Cari nilai x dan y: x = (' + c1 + '×' + b2 + ' − ' + c2 + '×' + b1 + ') / ' + D + ' = ' + formatIdNumber(x, 2, false) + '; y = (' + a1 + '×' + c2 + ' − ' + a2 + '×' + c1 + ') / ' + D + ' = ' + formatIdNumber(y, 2, false) + '.',
-        'Hasil akhir: x = ' + formatIdNumber(x, 2, false) + ' (' + itemXLabel + ') dan y = ' + formatIdNumber(y, 2, false) + ' (' + itemYLabel + ').'
-      ] : ['Sistem persamaan tidak memiliki solusi unik karena determinan D = 0.'];
+        'Misalkan x = jumlah ' + itemXLabel + ' dan y = jumlah ' + itemYLabel + '.',
+        'Bikin dua persamaannya: (1) ' + eq1Latex + ' dan (2) ' + eq2Latex + '.',
+        'Hitung determinannya: D = (' + a1 + ' × ' + b2 + ') − (' + a2 + ' × ' + b1 + ') = ' + D + '.',
+        'Hitung x dan y: x = (' + c1 + '×' + b2 + ' − ' + c2 + '×' + b1 + ') / ' + D + ' = ' + formatIdNumber(x, 2, false) + '; y = (' + a1 + '×' + c2 + ' − ' + a2 + '×' + c1 + ') / ' + D + ' = ' + formatIdNumber(y, 2, false) + '.',
+        'Jadi jawabannya: x = ' + formatIdNumber(x, 2, false) + ' (' + itemXLabel + ') dan y = ' + formatIdNumber(y, 2, false) + ' (' + itemYLabel + ').'
+      ] : ['Dua persamaan ini nggak punya satu jawaban pasti karena determinannya 0.'];
 
       return {
         codeHtml: codeHtml,
@@ -705,7 +705,7 @@
     const formulaPlain = 'L = (' + p1Id + ' &times; ' + l1Id + ') + (' + p2Id + ' &times; ' + l2Id + ') ' + unitSq;
 
     const codeHtml = [
-      pyComment('Jangkar Simbolik - Geometri Luas Gabungan (' + keyword + ')'),
+      pyComment('Rumus Kunci - Geometri Luas Gabungan (' + keyword + ')'),
       'satuan = ' + pyStr(eff.unit),
       'p1, l1 = ' + pyNum(p1Plain) + ', ' + pyNum(l1Plain) + '  ' + pyComment(eff.obj1Name),
       'p2, l2 = ' + pyNum(p2Plain) + ', ' + pyNum(l2Plain) + '  ' + pyComment(eff.obj2Name),
@@ -716,11 +716,11 @@
     ].map(pyLine).join('\n');
 
     const steps = valid ? [
-      'Identifikasi dimensi: ' + eff.obj1Name + ' (' + p1Id + ' ' + eff.unit + ' × ' + l1Id + ' ' + eff.unit + ') dan ' + eff.obj2Name + ' (' + p2Id + ' ' + eff.unit + ' × ' + l2Id + ' ' + eff.unit + ').',
-      'Hitung luas tapak alas ' + eff.obj1Name + ': L₁ = ' + p1Id + ' × ' + l1Id + ' = ' + l1AreaId + ' ' + unitSq + '.',
-      'Hitung luas tapak alas ' + eff.obj2Name + ': L₂ = ' + p2Id + ' × ' + l2Id + ' = ' + l2AreaId + ' ' + unitSq + '.',
-      'Jumlahkan kedua luas: L = ' + l1AreaId + ' + ' + l2AreaId + ' = ' + totalAreaId + ' ' + unitSq + '.'
-    ] : ['Dimensi panjang dan lebar harus lebih besar dari 0.'];
+      'Ukuran benda: ' + eff.obj1Name + ' (' + p1Id + ' ' + eff.unit + ' × ' + l1Id + ' ' + eff.unit + ') dan ' + eff.obj2Name + ' (' + p2Id + ' ' + eff.unit + ' × ' + l2Id + ' ' + eff.unit + ').',
+      'Hitung luas alas ' + eff.obj1Name + ': L₁ = ' + p1Id + ' × ' + l1Id + ' = ' + l1AreaId + ' ' + unitSq + '.',
+      'Hitung luas alas ' + eff.obj2Name + ': L₂ = ' + p2Id + ' × ' + l2Id + ' = ' + l2AreaId + ' ' + unitSq + '.',
+      'Jumlahin keduanya: L = ' + l1AreaId + ' + ' + l2AreaId + ' = ' + totalAreaId + ' ' + unitSq + '.'
+    ] : ['Ukuran panjang dan lebar harus lebih dari 0 ya.'];
 
     return {
       codeHtml: codeHtml,
@@ -901,19 +901,19 @@
           accuracy = {
             status: 'FAIL',
             metric: 'Angka hilang: ' + missing.join(', '),
-            reason: 'Nilai parameter ' + missing.join(', ') + ' tidak ditemukan di teks soal. Pastikan semua angka input tertulis di narasi.'
+            reason: 'Angka ' + missing.join(', ') + ' belum ketemu di teks soal. Pastikan semua angka input ada di ceritanya ya.'
           };
         } else if (eqMismatch) {
           accuracy = {
             status: 'FAIL',
-            metric: 'Persamaan tidak sinkron',
-            reason: eqMismatch + ' Perbarui persamaan di teks atau klik Bangkitkan Ulang Draf.'
+            metric: 'Rumus nggak sinkron',
+            reason: eqMismatch + ' Samakan rumusnya di teks atau klik Buat Ulang Soal.'
           };
         } else {
           accuracy = {
             status: 'PASS',
-            metric: 'Kunci: ' + anchor.answerDisplay,
-            reason: 'Seluruh parameter (c, m, x) terverifikasi dan perhitungan simbolik konsisten.'
+            metric: 'Jawaban: ' + anchor.answerDisplay,
+            reason: 'Semua angka (c, m, x) cocok sama hitungan rumusnya.'
           };
         }
       }
@@ -924,19 +924,19 @@
         accuracy = {
           status: 'FAIL',
           metric: 'Determinan D = 0',
-          reason: 'Sistem persamaan tidak memiliki solusi unik. Ubah koefisien agar a₁b₂ ≠ a₂b₁.'
+          reason: 'Dua persamaan ini nggak punya satu jawaban pasti. Ubah angkanya biar a₁b₂ ≠ a₂b₁.'
         };
       } else if (!ans.isPositiveSol) {
         accuracy = {
           status: 'FAIL',
           metric: 'x = ' + formatIdNumber(ans.x, 2, false) + ', y = ' + formatIdNumber(ans.y, 2, false),
-          reason: 'Solusi SPLDV harus berupa bilangan bulat positif agar valid untuk item diskret.'
+          reason: 'Hasil x dan y harus angka bulat positif biar masuk akal buat jumlah barang.'
         };
       } else if (ans.isSymmetric) {
         accuracy = {
           status: 'FAIL',
-          metric: 'x = ' + Math.round(ans.x) + ', y = ' + Math.round(ans.y) + ' (Simetris)',
-          reason: 'Daya diagnostik rendah: solusi simetris (x = y) mudah ditebak tanpa memodelkan SPLDV. Sesuaikan c₂ agar x ≠ y.'
+          metric: 'x = ' + Math.round(ans.x) + ', y = ' + Math.round(ans.y) + ' (Kembar)',
+          reason: 'Soal terlalu gampang ditebak karena jawabannya kembar (x = y). Ubah c₂ biar nilai x ≠ y.'
         };
       } else {
         const required = [coeffs.c1, coeffs.a2, coeffs.b2, coeffs.c2];
@@ -946,14 +946,14 @@
         if (missing.length > 0) {
           accuracy = {
             status: 'FAIL',
-            metric: 'Koefisien hilang',
-            reason: 'Angka parameter (' + missing.join(', ') + ') belum seluruhnya muncul di teks soal.'
+            metric: 'Angka hilang',
+            reason: 'Angka (' + missing.join(', ') + ') belum semuanya muncul di teks soal.'
           };
         } else {
           accuracy = {
             status: 'PASS',
             metric: 'x = ' + Math.round(ans.x) + ', y = ' + Math.round(ans.y),
-            reason: 'Solusi unik bilangan bulat positif dan non-simetris (daya diagnostik terjaga).'
+            reason: 'Jawabannya angka bulat positif dan nggak kembar (pas buat nguji pemahaman).'
           };
         }
       }
@@ -964,8 +964,8 @@
       if (!eff || !Number.isFinite(ans.value) || eff.p1 <= 0 || eff.l1 <= 0 || eff.p2 <= 0 || eff.l2 <= 0) {
         accuracy = {
           status: 'FAIL',
-          metric: 'Dimensi tidak valid',
-          reason: 'Panjang dan lebar kedua objek harus bernilai lebih dari 0.'
+          metric: 'Ukuran nggak valid',
+          reason: 'Panjang dan lebar dua benda harus lebih dari 0.'
         };
       } else {
         const reqDims = [eff.p1, eff.l1, eff.p2, eff.l2];
@@ -973,14 +973,14 @@
         if (missing.length > 0) {
           accuracy = {
             status: 'FAIL',
-            metric: 'Dimensi hilang',
-            reason: 'Dimensi (' + missing.map(function (v) { return formatIdNumber(v, 4, false); }).join(', ') + ') tidak lengkap pada narasi.'
+            metric: 'Ukuran hilang',
+            reason: 'Angka ukuran (' + missing.map(function (v) { return formatIdNumber(v, 4, false); }).join(', ') + ') belum lengkap di teks soal.'
           };
         } else {
           accuracy = {
             status: 'PASS',
             metric: 'Luas: ' + anchor.answerDisplay,
-            reason: 'Perhitungan luas gabungan L = L₁ + L₂ akurat untuk kedua objek.'
+            reason: 'Hitungan luas gabungan L = L₁ + L₂ sudah pas buat kedua benda.'
           };
         }
       }
@@ -991,34 +991,34 @@
     if (extracted.hasDollar && extracted.hasRp) {
       realism = {
         status: 'FAIL',
-        metric: 'Mata uang ganda ($ & Rp)',
-        reason: 'Teks mencampur simbol $ dan Rp. Seragamkan seluruh nominal ke satu mata uang.'
+        metric: 'Mata uang kecampur ($ & Rp)',
+        reason: 'Di teks ada $ sekaligus Rp. Samakan pakai satu mata uang aja ya.'
       };
     } else if (extracted.hasRp && extracted.currencyTokens.some(function (t) { return t.currency === 'Rp' && t.value < 500; })) {
       const badToken = extracted.currencyTokens.find(function (t) { return t.currency === 'Rp' && t.value < 500; });
       realism = {
         status: 'FAIL',
-        metric: 'Nominal ' + badToken.raw + ' tidak wajar',
-        reason: 'Nominal Rupiah (' + badToken.raw + ') terlalu rendah untuk harga/saldo harian. Sesuaikan ke ribuan (misal Rp25.000 dan Rp3.000).'
+        metric: 'Harga ' + badToken.raw + ' terlalu kecil',
+        reason: 'Nominal ' + badToken.raw + ' terlalu murah dan nggak masuk akal buat harga jajan sekarang. Naikkan ke ribuan (misal Rp25.000 dan Rp3.000).'
       };
     } else if (extracted.hasDollar && extracted.currencyTokens.some(function (t) { return t.currency === '$' && t.value >= 5000; })) {
       const badDollar = extracted.currencyTokens.find(function (t) { return t.currency === '$' && t.value >= 5000; });
       realism = {
         status: 'FAIL',
-        metric: 'Nominal ' + badDollar.raw + ' terlalu tinggi',
-        reason: 'Nominal Dolar (' + badDollar.raw + ') tidak realistis untuk transaksi harian siswa. Gunakan skala Dolar wajar atau ubah ke Rp.'
+        metric: 'Nominal ' + badDollar.raw + ' kemahalan',
+        reason: 'Nominal ' + badDollar.raw + ' kebesaran buat jajan harian siswa. Pakai Dolar yang wajar atau ganti ke Rp.'
       };
     } else if (input.topic === 'linear' && Number.isFinite(anchor.answer.value) && anchor.answer.value < 0) {
       realism = {
         status: 'FAIL',
-        metric: 'Hasil negatif (' + anchor.answerDisplay + ')',
-        reason: 'Kuantitas sisa tidak boleh negatif dalam konteks nyata. Naikkan nilai awal c atau kurangi m × x.'
+        metric: 'Hasil minus (' + anchor.answerDisplay + ')',
+        reason: 'Sisa saldo nggak mungkin minus di dunia nyata. Naikkan nilai awal c atau kecilkan m × x.'
       };
     } else if (input.topic === 'spldv' && (!anchor.answer || !anchor.answer.isPositiveSol)) {
       realism = {
         status: 'FAIL',
-        metric: 'Kuantitas tidak realistis',
-        reason: 'Jumlah item nyata harus berupa bilangan bulat positif (tidak boleh pecahan atau negatif).'
+        metric: 'Jumlah nggak masuk akal',
+        reason: 'Jumlah barang asli harus bulat positif (nggak boleh koma atau minus).'
       };
     } else if (input.topic === 'geometry') {
       const ans = anchor.answer;
@@ -1026,8 +1026,8 @@
       if (!eff || !Number.isFinite(ans.value) || ans.value <= 0) {
         realism = {
           status: 'FAIL',
-          metric: 'Luas tidak positif',
-          reason: 'Dimensi dan luas objek fisik harus lebih besar dari nol.'
+          metric: 'Luas nggak positif',
+          reason: 'Ukuran dan luas benda harus lebih dari nol.'
         };
       } else {
         const maxDec = Math.max(
@@ -1041,30 +1041,30 @@
         if (isSDGrade(input.grade) && maxDec > 2) {
           realism = {
             status: 'FAIL',
-            metric: maxDec + ' desimal (' + anchor.answerDisplay + ')',
-            reason: 'Beban ' + maxDec + ' angka desimal melampaui target kurikulum SD' +
-              (hasBaseSurface ? '.' : ' dan perlu memastikan sisi yang diukur ARCore adalah sisi alas (tapak objek), bukan sisi depan objek.') +
-              ' Aktifkan konversi ke satuan cm.'
+            metric: maxDec + ' angka di belakang koma (' + anchor.answerDisplay + ')',
+            reason: 'Kebanyakan koma (' + maxDec + ' desimal) buat anak SD' +
+              (hasBaseSurface ? '.' : ' dan perlu diperjelas yang diukur ARCore itu sisi alas (tapak benda), bukan sisi depannya.') +
+              ' Aktifin konversi ke cm aja.'
           };
         } else if (isSDGrade(input.grade) && flags.baseSurfaceNotSpecified && !hasBaseSurface) {
           realism = {
             status: 'FAIL',
-            metric: 'Sisi alas belum jelas',
-            reason: 'Pastikan sisi yang diukur ARCore adalah sisi alas (tapak objek), bukan sisi depan objek.'
+            metric: 'Bagian alas belum jelas',
+            reason: 'Perjelas kalau yang diukur ARCore itu sisi alas (tapak benda), bukan sisi depan benda.'
           };
         } else {
           realism = {
             status: 'PASS',
-            metric: isSDGrade(input.grade) ? ('Desimal aman (' + eff.unit + '²)') : 'Konteks realistis',
-            reason: 'Ukuran fisik dan satuan sesuai dengan tingkat perkembangan jenjang ' + getGradeLabel(input.grade) + '.'
+            metric: isSDGrade(input.grade) ? ('Angka aman (' + eff.unit + '²)') : 'Ukuran masuk akal',
+            reason: 'Ukuran fisik dan satuannya pas buat siswa ' + getGradeLabel(input.grade) + '.'
           };
         }
       }
     } else {
       realism = {
         status: 'PASS',
-        metric: 'Kuantitas dan satuan wajar',
-        reason: 'Semua nilai positif dan konsisten dengan konteks dunia nyata.'
+        metric: 'Angka & satuan wajar',
+        reason: 'Semua angka positif dan masuk akal buat situasi nyata.'
       };
     }
 
@@ -1079,30 +1079,30 @@
     if (!hasKeyword && hasAmbiguousGold) {
       authenticity = {
         status: 'FAIL',
-        metric: 'Generik & entitas ambigu',
-        reason: 'Narasi memakai istilah generik' +
+        metric: 'Terlalu umum & bikin bingung',
+        reason: 'Ceritanya masih pakai istilah umum' +
           (hasGenericGame ? ' ("game online")' : '') +
-          ' tanpa kata kunci minat "' + keyword + '", serta menimbulkan kerancuan entitas antara "peti emas" dan "koin emas" (ganti menjadi misal "peti berlian").'
+          ' tanpa nyebut hobi "' + keyword + '", plus ada "peti emas" dan "koin emas" yang mirip banget (ganti aja jadi "peti berlian").'
       };
     } else if (!hasKeyword) {
       authenticity = {
         status: 'FAIL',
-        metric: 'Minat spesifik absen',
-        reason: 'Kata kunci minat "' + keyword + '" tidak muncul dalam soal' +
-          (hasGenericGame ? ' (terdeteksi istilah generik "game online").' : '.') +
-          ' Sisipkan istilah spesifik minat siswa.'
+        metric: 'Hobi spesifik belum masuk',
+        reason: 'Kata kunci "' + keyword + '" belum muncul di teks soal' +
+          (hasGenericGame ? ' (masih pakai istilah umum "game online").' : '.') +
+          ' Masukin hobi spesifiknya biar relate.'
       };
     } else if (hasAmbiguousGold) {
       authenticity = {
         status: 'FAIL',
-        metric: 'Entitas ambigu',
-        reason: 'Istilah "peti emas" berdekatan dengan "koin emas" sehingga berisiko membingungkan siswa. Ganti nama peti dengan material berbeda (misal "peti berlian").'
+        metric: 'Nama benda mirip',
+        reason: 'Kata "peti emas" sama "koin emas" mirip banget dan bikin siswa bingung. Ganti nama petinya (misal "peti berlian").'
       };
     } else {
       authenticity = {
         status: 'PASS',
-        metric: 'Tag "' + keyword + '" cocok',
-        reason: 'Kata kunci minat spesifik hadir utuh tanpa istilah generik atau entitas ambigu.'
+        metric: 'Hobi "' + keyword + '" cocok',
+        reason: 'Kata kunci hobi sudah masuk dengan pas, nggak terlalu umum dan nggak bikin bingung.'
       };
     }
 
@@ -1128,33 +1128,33 @@
     if (hasChestChallenge && !hasExplicitMapping) {
       readingLevel = {
         status: 'FAIL',
-        metric: wordCount + ' / ' + maxW + ' kata (Implisit)',
-        reason: 'Informasi implisit: belum dijelaskan secara eksplisit bahwa setiap 1 tantangan memberikan tepat 1 peti.'
+        metric: wordCount + ' / ' + maxW + ' kata (Aturan belum jelas)',
+        reason: 'Ada info yang ke-skip: belum dijelasin kalau setiap 1 tantangan dapetnya tepat 1 peti.'
       };
     } else if (decorativeNumbers.length > 0) {
       const decStr = decorativeNumbers.map(function (n) { return formatIdNumber(n, 4, false); }).join(', ');
       readingLevel = {
         status: 'FAIL',
-        metric: 'SNI: angka dekoratif (' + decStr + ')',
-        reason: 'Terdeteksi angka dekoratif di luar parameter rumus (' + decStr + '). Hapus angka pengecoh sesuai prinsip Significant Number Identification.'
+        metric: 'SNI: ada angka pengecoh (' + decStr + ')',
+        reason: 'Kegap ada angka tambahan di luar rumus (' + decStr + '). Hapus angka pengecohnya biar siswa nggak bingung (aturan SNI).'
       };
     } else if (wordCount > maxW) {
       readingLevel = {
         status: 'FAIL',
-        metric: wordCount + ' / ' + maxW + ' kata (Berlebih)',
-        reason: 'Panjang soal (' + wordCount + ' kata) melebihi batas maksimal ' + maxW + ' kata. Ringkas kalimat agar tidak membebani pemahaman.'
+        metric: wordCount + ' / ' + maxW + ' kata (Kepanjangan)',
+        reason: 'Teks soal (' + wordCount + ' kata) lewat batas maksimal ' + maxW + ' kata. Persingkat lagi biar enak dibaca.'
       };
     } else if (isSDGrade(input.grade) && sentenceInfo.avgWords > 18) {
       readingLevel = {
         status: 'FAIL',
         metric: 'Rata-rata ' + sentenceInfo.avgWords + ' kata/kalimat',
-        reason: 'Kalimat terlalu panjang untuk jenjang SD (batas ≤ 18 kata/kalimat). Pecah menjadi kalimat pendek.'
+        reason: 'Kalimatnya kepanjangan buat anak SD (maks. 18 kata/kalimat). Pecah jadi kalimat pendek aja.'
       };
     } else {
       readingLevel = {
         status: 'PASS',
         metric: wordCount + ' / ' + maxW + ' kata',
-        reason: 'Panjang kata, keterbacaan kalimat, dan kepatuhan SNI sesuai untuk jenjang ' + getGradeLabel(input.grade) + '.'
+        reason: 'Panjang kalimat, gaya bahasa, dan bebas angka pengecoh sudah pas buat ' + getGradeLabel(input.grade) + '.'
       };
     }
 
@@ -1222,29 +1222,29 @@
         if (a1 * b2 - a2 * b1 === 0) {
           b2 += 1;
           input.spldv.b2 = b2;
-          logs.push('Accuracy: Menyesuaikan koefisien b₂ menjadi ' + b2 + ' agar determinan ≠ 0.');
+          logs.push('Cek Hitungan: Geser b₂ jadi ' + b2 + ' biar ada jawaban pastinya (D ≠ 0).');
         }
 
         if (input.hobbyPreset === 'roblox' && a1 === 1 && b1 === 1 && c1 === 40 && a2 === 2 && b2 === 5 && c2 === 140) {
           input.spldv.c2 = 155;
-          logs.push('Accuracy: Mengubah total koin c₂ dari 140 menjadi 155 agar solusi tidak simetris (x = 15, y = 25).');
+          logs.push('Cek Hitungan: Ubah total koin c₂ dari 140 ke 155 biar jawabannya nggak kembar (jadi x = 15, y = 25).');
         } else {
           const found = findNonSymmetricSpldvC2(a1, b1, c1, a2, b2, c2);
           if (found) {
             input.spldv.c2 = found.c2;
-            logs.push('Accuracy: Menyesuaikan c₂ menjadi ' + found.c2 + ' agar solusi bulat positif dan non-simetris (x = ' + found.x + ', y = ' + found.y + ').');
+            logs.push('Cek Hitungan: Sesuaikan c₂ jadi ' + found.c2 + ' biar ketemu angka bulat nggak kembar (x = ' + found.x + ', y = ' + found.y + ').');
           } else {
             const targetX = 12;
             const targetY = 18;
             input.spldv.c1 = a1 * targetX + b1 * targetY;
             input.spldv.c2 = a2 * targetX + b2 * targetY;
-            logs.push('Accuracy: Menyetel ulang konstanta c₁ = ' + input.spldv.c1 + ' dan c₂ = ' + input.spldv.c2 + ' untuk solusi bulat non-simetris (x = 12, y = 18).');
+            logs.push('Cek Hitungan: Atur ulang c₁ = ' + input.spldv.c1 + ' dan c₂ = ' + input.spldv.c2 + ' biar hasilnya bulat dan nggak kembar (x = 12, y = 18).');
           }
         }
         needsRegenerateFromParams = true;
       } else {
         needsRegenerateFromParams = true;
-        logs.push('Accuracy: Menyinkronkan seluruh parameter numerik dan persamaan pada draf soal.');
+        logs.push('Cek Hitungan: Sinkronkan ulang semua angka dan rumus di soal.');
       }
     }
 
@@ -1255,21 +1255,21 @@
           input.geometry.convertToCmForSD = true;
           state.draft.flags.baseSurfaceNotSpecified = false;
           needsRegenerateFromParams = true;
-          logs.push('Realism: Mengonversi satuan meter ke sentimeter (cm) bulat dan mempertegas pengukuran pada sisi alas (tapak objek).');
+          logs.push('Cek Masuk Akal: Ubah satuan meter ke cm bulat dan perjelas pengukuran sisi alas (tapak benda).');
         }
       } else if (input.topic === 'linear') {
         if (input.linear.currency === 'Rp' && (input.linear.c < 500 || input.linear.m < 500)) {
           input.linear.c = Math.round(input.linear.c * 1000);
           input.linear.m = Math.round(input.linear.m * 1000);
           needsRegenerateFromParams = true;
-          logs.push('Realism: Menskalakan nominal Rupiah ke skala ribuan yang wajar (Rp' + formatIdNumber(input.linear.c, 0, true) + ' dan Rp' + formatIdNumber(input.linear.m, 0, true) + ').');
+          logs.push('Cek Masuk Akal: Normalin harga Rupiah ke ribuan yang wajar (Rp' + formatIdNumber(input.linear.c, 0, true) + ' dan Rp' + formatIdNumber(input.linear.m, 0, true) + ').');
         } else if (input.linear.op === '-' && input.linear.c - input.linear.m * input.linear.x < 0) {
           input.linear.c = input.linear.m * (input.linear.x + 2);
           needsRegenerateFromParams = true;
-          logs.push('Realism: Menaikkan nilai awal c menjadi ' + input.linear.c + ' agar sisa tetap bernilai positif.');
+          logs.push('Cek Masuk Akal: Naikkan nilai awal c jadi ' + input.linear.c + ' biar sisa saldonya nggak minus.');
         } else if (extractedMixedCurrency(workingText)) {
           needsRegenerateFromParams = true;
-          logs.push('Realism: Menyeragamkan mata uang pada narasi soal.');
+          logs.push('Cek Masuk Akal: Samakan mata uang di teks soal.');
         }
       }
     }
@@ -1287,7 +1287,7 @@
         }
         workingText = workingText.replace(/peti\s+emas/gi, 'peti berlian');
       }
-      logs.push('Authenticity: Menyisipkan kata kunci minat spesifik "' + kw + '" dan mengganti entitas ambigu "peti emas" menjadi "peti berlian".');
+      logs.push('Cek Hobi: Masukin kata kunci "' + kw + '" dan ganti "peti emas" jadi "peti berlian" biar nggak mirip sama "koin emas".');
     }
 
     // 4. Reading-Level & SNI Fixes
@@ -1296,7 +1296,7 @@
       state.draft.flags.conciseMode = true;
       if (/SNI:/i.test(ev.readingLevel.metric)) {
         needsRegenerateFromParams = true;
-        logs.push('Reading-Level: Menghapus angka dekoratif di luar parameter rumus (prinsip Significant Number Identification).');
+        logs.push('Cek Bahasa & SNI: Hapus angka pengecoh di luar rumus.');
       } else {
         if (!needsRegenerateFromParams && /tantangan/i.test(workingText) && /peti/i.test(workingText) && !/(setiap|tiap)\s*(1|satu)?\s*tantangan/i.test(workingText)) {
           workingText = workingText.replace(/(tantangan[^.]*\.)/i, '$1 Setiap 1 tantangan yang diselesaikan memberikan tepat 1 peti.');
@@ -1304,14 +1304,14 @@
         if (countWords(workingText) > input.maxWords) {
           needsRegenerateFromParams = true;
         }
-        logs.push('Reading-Level: Menambahkan aturan eksplisit "Setiap 1 tantangan ... tepat 1 peti" dan merapikan kepadatan kalimat sesuai batas kata.');
+        logs.push('Cek Bahasa & SNI: Tambahin kalimat jelas "Setiap 1 tantangan ... tepat 1 peti" dan rapikan panjang kalimatnya.');
       }
     }
 
     state.draft.iteration += 1;
     state.draft.refinementLogs = state.draft.refinementLogs.concat(
       logs.map(function (item) {
-        return 'Iterasi ' + state.draft.iteration + ' — ' + item;
+        return 'Revisi ke-' + state.draft.iteration + ' — ' + item;
       })
     );
 
@@ -1346,15 +1346,15 @@
 
     if (state.curation.needsReverification) {
       state.curation.statusMode = 'warning';
-      state.curation.statusMessage = 'Perubahan Terdeteksi — Wajib Verifikasi Ulang sebelum diterbitkan.';
+      state.curation.statusMessage = 'Ada angka atau mata uang yang berubah — klik Cek Ulang dulu ya.';
       state.curation.isPublished = false;
     } else if (state.evaluation.allPassed) {
       state.curation.statusMode = 'verified';
-      state.curation.statusMessage = 'Terverifikasi — Seluruh 4 agen lulus dan soal siap diterbitkan ke siswa.';
+      state.curation.statusMessage = 'Sip, soal sudah aman dan siap dicoba siswa!';
       state.curation.isPublished = true;
     } else {
       state.curation.statusMode = 'error';
-      state.curation.statusMessage = 'Perlu Perbaikan — Minimal satu agen berstatus GAGAL. Jalankan Refinement atau perbaiki teks.';
+      state.curation.statusMessage = 'Masih ada yang GAGAL dicek. Klik Perbaiki Otomatis atau benerin teksnya dulu ya.';
       state.curation.isPublished = false;
     }
   }
@@ -1366,18 +1366,18 @@
     if (newSig !== state.curation.baselineSignature) {
       state.curation.needsReverification = true;
       state.curation.statusMode = 'warning';
-      state.curation.statusMessage = 'Perubahan Terdeteksi — Wajib Verifikasi Ulang angka dan mata uang.';
+      state.curation.statusMessage = 'Ada angka atau mata uang yang berubah — klik Cek Ulang dulu ya.';
       state.curation.isPublished = false;
     } else {
       state.curation.needsReverification = false;
       state.evaluation = evaluateDraft(state.draft.text, state.input, state.symbolicAnchor, state.draft.flags);
       if (state.evaluation.allPassed) {
         state.curation.statusMode = 'verified';
-        state.curation.statusMessage = 'Terverifikasi — Perubahan teks aman tanpa mengubah angka atau mata uang.';
+        state.curation.statusMessage = 'Sip, edit teks aman karena nggak mengubah angka atau mata uang.';
         state.curation.isPublished = true;
       } else {
         state.curation.statusMode = 'error';
-        state.curation.statusMessage = 'Perlu Perbaikan — Periksa isu yang dilaporkan pada panel agen.';
+        state.curation.statusMessage = 'Masih ada yang kurang pas — cek detailnya di panel Status Agen.';
         state.curation.isPublished = false;
       }
     }
@@ -1451,11 +1451,11 @@
       state.curation.baselineText = state.draft.text;
       state.curation.baselineSignature = computeNumericCurrencySignature(state.draft.text);
       state.curation.statusMode = 'verified';
-      state.curation.statusMessage = 'Verifikasi Berhasil — Kunci jawaban diperbarui (' + state.symbolicAnchor.answerDisplay + ') dan siap diterbitkan.';
+      state.curation.statusMessage = 'Cek ulang aman! Jawaban terupdate (' + state.symbolicAnchor.answerDisplay + ') dan siap dicoba siswa.';
       state.curation.isPublished = true;
     } else {
       state.curation.statusMode = 'error';
-      state.curation.statusMessage = 'Verifikasi Gagal — Periksa catatan merah pada panel Evaluasi 4 Agen.';
+      state.curation.statusMessage = 'Cek ulang masih gagal — lihat catatan merah di sebelah kanan ya.';
       state.curation.isPublished = false;
     }
 
@@ -1706,25 +1706,25 @@
       const valY = parseFlexibleNumber(raw2, true);
       if (!Number.isFinite(valX) || !Number.isFinite(valY)) {
         state.student.isCorrect = false;
-        state.student.feedback = 'Belum Tepat — Masukkan angka bulat untuk nilai x dan y.';
+        state.student.feedback = 'Belum pas nih — ketik angka bulat buat nilai x dan y ya.';
       } else if (Math.abs(valX - ans.x) < 1e-4 && Math.abs(valY - ans.y) < 1e-4) {
         state.student.isCorrect = true;
-        state.student.feedback = 'Benar! Jawabanmu tepat: x = ' + formatIdNumber(ans.x, 2, false) + ' (' + ans.xLabel + ') dan y = ' + formatIdNumber(ans.y, 2, false) + ' (' + ans.yLabel + ').';
+        state.student.feedback = 'Keren, jawabanmu benar! x = ' + formatIdNumber(ans.x, 2, false) + ' (' + ans.xLabel + ') dan y = ' + formatIdNumber(ans.y, 2, false) + ' (' + ans.yLabel + ').';
       } else {
         state.student.isCorrect = false;
-        state.student.feedback = 'Belum Tepat — Periksa kembali pemodelan SPLDV pada langkah penyelesaian di bawah.';
+        state.student.feedback = 'Belum tepat nih — coba cek lagi langkah ngerjainnya di bawah ya.';
       }
     } else {
       const val = parseFlexibleNumber(raw1, state.input.topic === 'geometry' && ans.effectiveGeo && ans.effectiveGeo.unit === 'm');
       if (!Number.isFinite(val)) {
         state.student.isCorrect = false;
-        state.student.feedback = 'Belum Tepat — Masukkan nilai numerik yang valid (contoh: ' + state.symbolicAnchor.answerDisplay + ').';
+        state.student.feedback = 'Belum pas nih — ketik angkanya yang valid ya (misal: ' + state.symbolicAnchor.answerDisplay + ').';
       } else if (Math.abs(val - ans.value) < 1e-4) {
         state.student.isCorrect = true;
-        state.student.feedback = 'Benar! Hasil akhir yang tepat adalah ' + state.symbolicAnchor.answerDisplay + '.';
+        state.student.feedback = 'Keren, jawabanmu benar! Hasilnya ' + state.symbolicAnchor.answerDisplay + '.';
       } else {
         state.student.isCorrect = false;
-        state.student.feedback = 'Belum Tepat — Jawaban yang benar adalah ' + state.symbolicAnchor.answerDisplay + '. Simak langkah penyelesaian di bawah.';
+        state.student.feedback = 'Belum tepat nih — jawaban yang benar itu ' + state.symbolicAnchor.answerDisplay + '. Cek cara ngerjainnya di bawah ya.';
       }
     }
 
@@ -1776,13 +1776,13 @@
   function switchView(targetView) {
     if (targetView === 'student') {
       if (state.curation.needsReverification) {
-        setGlobalNotice('Perubahan angka/mata uang terdeteksi. Klik "Verifikasi Ulang" pada Modul D sebelum membuka Mode Siswa.');
+        setGlobalNotice('Ada angka atau mata uang yang berubah. Klik "Cek Ulang" dulu sebelum masuk Mode Siswa ya.');
         setActiveStage(4);
         document.getElementById('btn-reverify').focus();
         return;
       }
       if (!state.evaluation.allPassed) {
-        setGlobalNotice('Minimal satu agen evaluator masih berstatus GAGAL. Jalankan "Refinement Agent" atau perbaiki teks terlebih dahulu.');
+        setGlobalNotice('Masih ada yang GAGAL dicek. Klik "Perbaiki Otomatis" atau edit manual dulu ya.');
         setActiveStage(3);
         return;
       }
@@ -1917,7 +1917,7 @@
     });
 
     const presetChip = document.getElementById('active-preset-chip');
-    presetChip.textContent = PRESET_LABELS[state.activePreset] || 'Mode Kustom';
+    presetChip.textContent = PRESET_LABELS[state.activePreset] || 'Atur Sendiri';
 
     const ev = state.evaluation;
     const passCount = [ev.accuracy, ev.realism, ev.authenticity, ev.readingLevel].filter(function (a) {
@@ -1929,7 +1929,7 @@
 
     const badge4 = document.getElementById('step-badge-4');
     if (state.curation.needsReverification) {
-      badge4.textContent = 'Wajib Cek';
+      badge4.textContent = 'Cek Ulang';
       badge4.className = 'step-pill pill-warn';
     } else if (!ev.allPassed) {
       badge4.textContent = 'Tertahan';
@@ -1961,10 +1961,10 @@
   function buildMiniAgentsListHtml(includeReason) {
     const ev = state.evaluation;
     const items = [
-      { label: 'Mathematical Accuracy', data: ev.accuracy },
-      { label: 'Realism', data: ev.realism },
-      { label: 'Authenticity', data: ev.authenticity },
-      { label: 'Reading-Level & SNI', data: ev.readingLevel }
+      { label: 'Cek Hitungan (Accuracy)', data: ev.accuracy },
+      { label: 'Cek Masuk Akal (Realism)', data: ev.realism },
+      { label: 'Cek Hobi (Authenticity)', data: ev.authenticity },
+      { label: 'Cek Bahasa & SNI', data: ev.readingLevel }
     ];
 
     return items.map(function (item) {
@@ -2039,10 +2039,10 @@
     prevBtn.disabled = stage === 1;
 
     const nextTitles = {
-      1: 'Lanjut ke Symbolic & Draf',
-      2: 'Lanjut ke Evaluasi 4 Agen',
-      3: 'Lanjut ke Kurasi Guru',
-      4: 'Terbitkan ke Mode Siswa'
+      1: 'Lanjut: Rumus & Draf',
+      2: 'Lanjut: Cek 4 Agen',
+      3: 'Lanjut: Edit Guru',
+      4: 'Lanjut ke Mode Siswa'
     };
     nextLabel.textContent = nextTitles[stage] || 'Lanjut';
     nextBtn.disabled = stage === 4 && (state.curation.needsReverification || !state.evaluation.allPassed);
@@ -2061,10 +2061,10 @@
   function renderAgentSection() {
     const ev = state.evaluation;
     const agents = [
-      { key: 'accuracy', title: 'Mathematical Accuracy Agent', data: ev.accuracy },
-      { key: 'realism', title: 'Realism Agent', data: ev.realism },
-      { key: 'authenticity', title: 'Authenticity Agent', data: ev.authenticity },
-      { key: 'readingLevel', title: 'Reading-Level Agent', data: ev.readingLevel }
+      { key: 'accuracy', title: 'Cek Hitungan (Accuracy)', data: ev.accuracy },
+      { key: 'realism', title: 'Cek Masuk Akal (Realism)', data: ev.realism },
+      { key: 'authenticity', title: 'Cek Hobi (Authenticity)', data: ev.authenticity },
+      { key: 'readingLevel', title: 'Cek Bahasa & SNI (Reading-Level)', data: ev.readingLevel }
     ];
 
     const passCount = agents.filter(function (a) { return a.data.status === 'PASS'; }).length;
@@ -2073,7 +2073,7 @@
     summaryEl.className = 'status-chip ' + (passCount === 4 ? 'chip-pass' : 'chip-fail');
 
     const iterEl = document.getElementById('refinement-iteration');
-    iterEl.textContent = 'Iterasi ' + state.draft.iteration + ' / ' + state.draft.maxIterations;
+    iterEl.textContent = 'Revisi ' + state.draft.iteration + ' / ' + state.draft.maxIterations;
 
     const grid = document.getElementById('agents-grid');
     grid.innerHTML = agents.map(function (item) {
@@ -2100,13 +2100,13 @@
     const refineHint = document.getElementById('refinement-hint');
     if (ev.allPassed) {
       refineBtn.disabled = true;
-      refineHint.textContent = 'Semua 4 agen berstatus LULUS. Tidak ada revisi tambahan yang diperlukan.';
+      refineHint.textContent = 'Mantap, semua agen sudah lulus!';
     } else if (state.draft.iteration >= state.draft.maxIterations) {
       refineBtn.disabled = true;
-      refineHint.textContent = 'Batas maksimal 5 iterasi tercapai. Gunakan Editor Kurasi Guru di bawah.';
+      refineHint.textContent = 'Sudah mentok 5 kali revisi otomatis. Lanjut edit manual aja di tahap berikutnya ya.';
     } else {
       refineBtn.disabled = false;
-      refineHint.textContent = (4 - passCount) + ' agen memerlukan perbaikan. Klik untuk menjalankan siklus revisi otomatis.';
+      refineHint.textContent = 'Ada ' + (4 - passCount) + ' poin yang masih gagal. Klik tombol di kanan buat beresin otomatis.';
     }
 
     const logBox = document.getElementById('refinement-log');
@@ -2163,11 +2163,11 @@
     const scaleLabel = document.getElementById('btn-ep-scale-label');
     scaleBtn.disabled = !isLinear || (!hasDollarInDraft && !hasSmallRpInDraft && !hasNormalRpInDraft);
     if (hasDollarInDraft) {
-      scaleLabel.textContent = 'Lokalisi Mata Uang ($ ke Rp)';
+      scaleLabel.textContent = 'Ubah $ ke Rupiah';
     } else if (hasSmallRpInDraft) {
-      scaleLabel.textContent = 'Skala Rupiah Wajar (×1.000)';
+      scaleLabel.textContent = 'Normalin ke Ribuan (×1.000)';
     } else {
-      scaleLabel.textContent = 'Uji Salah Ketik Nol (Rp)';
+      scaleLabel.textContent = 'Tes Salah Ketik Nol (Rp)';
     }
 
     const publishBtn = document.getElementById('btn-publish');
@@ -2221,7 +2221,7 @@
       input1.placeholder = effUnit === 'cm' ? 'Contoh: 2451…' : 'Contoh: 0,2451…';
       wrap2.hidden = true;
     } else {
-      label1.textContent = 'Jawaban Akhir (' + inp.linear.currency + ')';
+      label1.textContent = 'Jawabanmu (' + inp.linear.currency + ')';
       input1.placeholder = inp.linear.currency === 'Rp' ? 'Contoh: 13000 atau Rp13.000…' : 'Contoh: 13 atau $13…';
       wrap2.hidden = true;
     }

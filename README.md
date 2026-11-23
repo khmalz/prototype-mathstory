@@ -2,17 +2,11 @@
 
 Prototipe web statis **Sistem Pengajaran Berbantuan Komputer (PBK) Berbasis Kendali Berlapis untuk Mengubah Rumus Matematika Menjadi Soal Cerita Sesuai Kegemaran Siswa**.
 
-Disusun oleh **Kelompok 10 — Program Studi Ilmu Komputer, FMIPA Universitas Negeri Jakarta (2026)**:
-- **Ananda Giwank Abhinaya** (1313624038)
-- **Khairul Akmal** (1313624017)
-- **Sayyied Ridho Arhami** (1313624065)
-- **Dosen Pengampu:** Dr. Ria Arafiyah, M.Si.
-
 ---
 
 ## Fitur Utama
 
-Prototipe ini mensimulasikan secara deterministik (100% *client-side* tanpa API AI eksternal) arsitektur kendali empat lapis pada Bab 3 Proposal:
+Prototipe ini mensimulasikan secara deterministik (100% *client-side* tanpa API AI eksternal) arsitektur kendali empat lapis:
 
 1. **Modul A — Input Terstruktur & Sensor Konteks Nyata**
    - Mendukung 3 materi: **Fungsi Linear Dua Langkah** (`y = c ± mx`), **SPLDV**, dan **Geometri Luas Bangun Gabungan**.
@@ -29,7 +23,7 @@ Prototipe ini mensimulasikan secara deterministik (100% *client-side* tanpa API 
 5. **Modul E — Mode Pratinjau Siswa**
    - Tampilan lembar latihan bersih, bantuan rumus opsional (KaTeX + fallback offline), pengecekan jawaban fleksibel (`Rp13.000`, `13000`, `0,2451`), dan langkah penyelesaian simbolik.
 
-## 3 Preset Kasus Demo Proposal
+## 3 Preset Kasus Demo
 
 - **Kasus 1 — Aljabar Linear (`Kedai Es Teh Nusantara`):** Simulasi *scaffolding* untuk SMP Kelas 7 (`Rp25.000`, `Rp3.000`, `x = 4` → `Rp13.000`) dan demo deteksi ketidakwajaran nominal oleh *Realism Agent*.
 - **Kasus 2 — SPLDV (`Roblox`):** Mendemonstrasikan 3 kegagalan awal (*solusi simetris*, *generik & entitas ambigu*, *informasi implisit*) lalu diperbaiki otomatis oleh *Refinement Agent* (`x = 15, y = 25`).
@@ -48,17 +42,6 @@ Aplikasi berjalan **100% statis** tanpa *build tools* maupun server backend:
    ```
    Lalu buka `http://localhost:8000`.
 
-## Deploy ke GitHub Pages
-
-Struktur file sudah siap untuk GitHub Pages (`index.html` di root, seluruh path aset relatif, serta `.nojekyll` disertakan):
-
-1. Push repository ini ke GitHub (branch `main`).
-2. Buka **Settings → Pages** di repository GitHub Anda.
-3. Pada bagian **Build and deployment**:
-   - **Source:** `Deploy from a branch`
-   - **Branch:** `main` / `/ (root)`
-4. Klik **Save** dan tunggu beberapa saat hingga situs aktif di `https://<username>.github.io/<nama-repo>/`.
-
 ---
 
 ## Struktur File
@@ -68,8 +51,5 @@ Struktur file sudah siap untuk GitHub Pages (`index.html` di root, seluruh path 
 ├── index.html      # Struktur semantik Workbench Guru (Modul A–D) dan Mode Siswa (Modul E)
 ├── style.css       # Design system Academic Math Studio, responsif, WCAG-compliant
 ├── script.js       # State store, Math & Template Engine, 4 Evaluator Agents, Refinement, Kurasi
-├── PLAN.md         # Rencana arsitektur dan implementasi
-├── README.md       # Dokumentasi proyek dan panduan deploy GitHub Pages
-├── .gitignore      # Pengecualian file OS, editor, cache, dan direktori agen lokal
-└── .nojekyll       # Menonaktifkan pemrosesan Jekyll di GitHub Pages
+└── PLAN.md         # Rencana arsitektur dan implementasi
 ```

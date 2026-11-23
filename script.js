@@ -12,6 +12,7 @@
     refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>',
     eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
     arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>',
     sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>',
     shieldCheck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>',
     user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
@@ -144,11 +145,31 @@
     custom: 'Mode Kustom'
   };
 
+  const PRESET_DESCRIPTIONS = {
+    case1: {
+      title: 'Kasus 1 — Aljabar Linear Dua Langkah (Kedai Es Teh Nusantara)',
+      desc: 'Skenario dengan scaffolding rumus eksplisit untuk SMP Kelas 7 pembaca pemula dan simulasi kurasi guru terhadap nominal Rupiah.'
+    },
+    case2: {
+      title: 'Kasus 2 — SPLDV (Roblox: Deteksi Celah & Refinement)',
+      desc: 'Draf awal sengaja memuat 3 celah (solusi simetris, istilah generik & ambigu, serta informasi implisit) untuk ditangkap 4 Agen Evaluator dan diperbaiki otomatis.'
+    },
+    case3: {
+      title: 'Kasus 3 — Geometri Luas Gabungan (Sensor ARCore SD)',
+      desc: 'Menampilkan penolakan Realism Agent terhadap beban 4 desimal (0,2451 m²) bagi siswa SD serta penegasan sisi alas sebelum dikonversi ke satuan cm.'
+    },
+    custom: {
+      title: 'Skenario Kustom — Parameter & Minat Bebas',
+      desc: 'Sistem menghitung kunci simbolik, menyusun Prompt Kendala, dan memvalidasi soal sesuai parameter serta kata kunci minat yang Anda tentukan.'
+    }
+  };
+
   /* ==========================================================================
    * 3. Single Reactive State Store
    * ========================================================================== */
   const state = {
     activeView: 'teacher',
+    layoutMode: 'guided',
     activeStage: 1,
     activePreset: 'case1',
     input: {
@@ -1364,6 +1385,7 @@
     renderAgentSection();
     renderCurationSection(Boolean(fromEditorTyping));
     renderStepperAndHeader();
+    renderCompanionPanels();
   }
 
   function reverifyTeacherDraft() {
@@ -1623,7 +1645,7 @@
         baseSurfaceNotSpecified: false,
         conciseMode: false
       };
-      state.activeStage = 3;
+      state.activeStage = 1;
     } else if (presetId === 'case3') {
       state.input = {
         topic: 'geometry',
@@ -1651,7 +1673,7 @@
         baseSurfaceNotSpecified: true,
         conciseMode: false
       };
-      state.activeStage = 3;
+      state.activeStage = 1;
     }
 
     syncFormInputsFromState();
@@ -1725,6 +1747,10 @@
 
   function setActiveStage(stageNum) {
     state.activeStage = stageNum;
+    const teacherEl = document.getElementById('view-teacher');
+    teacherEl.setAttribute('data-layout', state.layoutMode);
+    teacherEl.setAttribute('data-stage', String(stageNum <= 4 ? stageNum : 4));
+
     const mapPanel = {
       1: 'panel-input',
       2: 'panel-symbolic',
@@ -1734,14 +1760,17 @@
     document.querySelectorAll('.panel').forEach(function (p) {
       p.classList.remove('is-highlighted');
     });
-    const targetId = mapPanel[stageNum];
-    if (targetId && state.activeView === 'teacher') {
-      const panelEl = document.getElementById(targetId);
-      if (panelEl) {
-        panelEl.classList.add('is-highlighted');
+    if (state.layoutMode === 'overview' && state.activeView === 'teacher') {
+      const targetId = mapPanel[stageNum];
+      if (targetId) {
+        const panelEl = document.getElementById(targetId);
+        if (panelEl) {
+          panelEl.classList.add('is-highlighted');
+        }
       }
     }
     renderStepperAndHeader();
+    renderCompanionPanels();
   }
 
   function switchView(targetView) {
@@ -1771,6 +1800,7 @@
     document.getElementById('view-student').hidden = targetView !== 'student';
 
     renderStepperAndHeader();
+    renderCompanionPanels();
     if (targetView === 'student') {
       renderStudentView();
     }
@@ -1871,12 +1901,16 @@
   }
 
   function renderStepperAndHeader() {
-    const teacherTab = document.getElementById('btn-view-teacher');
-    const studentTab = document.getElementById('btn-view-student');
-    teacherTab.classList.toggle('is-active', state.activeView === 'teacher');
-    teacherTab.setAttribute('aria-selected', String(state.activeView === 'teacher'));
-    studentTab.classList.toggle('is-active', state.activeView === 'student');
-    studentTab.setAttribute('aria-selected', String(state.activeView === 'student'));
+    const guidedBtn = document.getElementById('btn-layout-guided');
+    const overviewBtn = document.getElementById('btn-layout-overview');
+    guidedBtn.classList.toggle('is-active', state.layoutMode === 'guided');
+    guidedBtn.setAttribute('aria-pressed', String(state.layoutMode === 'guided'));
+    overviewBtn.classList.toggle('is-active', state.layoutMode === 'overview');
+    overviewBtn.setAttribute('aria-pressed', String(state.layoutMode === 'overview'));
+
+    const teacherEl = document.getElementById('view-teacher');
+    teacherEl.setAttribute('data-layout', state.layoutMode);
+    teacherEl.setAttribute('data-stage', String(state.activeStage <= 4 ? state.activeStage : 4));
 
     document.querySelectorAll('.preset-btn').forEach(function (btn) {
       btn.classList.toggle('is-active', btn.dataset.preset === state.activePreset);
@@ -1885,13 +1919,33 @@
     const presetChip = document.getElementById('active-preset-chip');
     presetChip.textContent = PRESET_LABELS[state.activePreset] || 'Mode Kustom';
 
+    const ev = state.evaluation;
+    const passCount = [ev.accuracy, ev.realism, ev.authenticity, ev.readingLevel].filter(function (a) {
+      return a.status === 'PASS';
+    }).length;
+    const badge3 = document.getElementById('step-badge-3');
+    badge3.textContent = passCount === 4 ? '4/4' : (4 - passCount) + ' Gagal';
+    badge3.className = 'step-pill ' + (passCount === 4 ? 'pill-pass' : 'pill-fail');
+
+    const badge4 = document.getElementById('step-badge-4');
+    if (state.curation.needsReverification) {
+      badge4.textContent = 'Wajib Cek';
+      badge4.className = 'step-pill pill-warn';
+    } else if (!ev.allPassed) {
+      badge4.textContent = 'Tertahan';
+      badge4.className = 'step-pill pill-fail';
+    } else {
+      badge4.textContent = 'Siap';
+      badge4.className = 'step-pill pill-pass';
+    }
+
     document.querySelectorAll('.step-btn').forEach(function (btn) {
       const stage = Number(btn.dataset.stage);
       const isCurrent = stage === state.activeStage;
       const isDone =
         (stage === 1 && state.activeStage > 1) ||
         (stage === 2 && state.activeStage > 2) ||
-        (stage === 3 && state.evaluation.allPassed && state.activeStage >= 3 && !isCurrent) ||
+        (stage === 3 && state.evaluation.allPassed && state.activeStage > 3 && !isCurrent) ||
         (stage === 4 && state.curation.isPublished && state.activeView === 'student');
 
       btn.classList.toggle('is-active', isCurrent);
@@ -1902,6 +1956,96 @@
         btn.removeAttribute('aria-current');
       }
     });
+  }
+
+  function buildMiniAgentsListHtml(includeReason) {
+    const ev = state.evaluation;
+    const items = [
+      { label: 'Mathematical Accuracy', data: ev.accuracy },
+      { label: 'Realism', data: ev.realism },
+      { label: 'Authenticity', data: ev.authenticity },
+      { label: 'Reading-Level & SNI', data: ev.readingLevel }
+    ];
+
+    return items.map(function (item) {
+      const isPass = item.data.status === 'PASS';
+      const cardClass = isPass ? 'status-pass' : 'status-fail';
+      const badgeClass = isPass ? 'badge-pass' : 'badge-fail';
+      const iconHtml = isPass ? ICONS.check : ICONS.x;
+      const badgeLabel = isPass ? 'LULUS' : 'GAGAL';
+      const detailText = includeReason && !isPass ? item.data.reason : item.data.metric;
+
+      return '<div class="mini-agent-item ' + cardClass + '">' +
+        '<div class="mini-agent-info">' +
+          '<span class="mini-agent-name">' + escapeHtml(item.label) + '</span>' +
+          '<span class="mini-agent-detail">' + escapeHtml(detailText) + '</span>' +
+        '</div>' +
+        '<span class="agent-badge ' + badgeClass + '">' +
+          '<span class="badge-icon" aria-hidden="true">' + iconHtml + '</span>' +
+          '<span>' + badgeLabel + '</span>' +
+        '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderCompanionPanels() {
+    const brief = PRESET_DESCRIPTIONS[state.activePreset] || PRESET_DESCRIPTIONS.custom;
+    document.getElementById('s1-case-title').textContent = brief.title;
+    document.getElementById('s1-case-desc').textContent = brief.desc;
+    document.getElementById('s1-formula').innerHTML = renderMath(
+      state.symbolicAnchor.formulaLatex,
+      state.symbolicAnchor.formulaPlain
+    );
+    document.getElementById('s1-answer').textContent = state.symbolicAnchor.answerDisplay;
+    document.getElementById('s1-agents-mini').innerHTML = buildMiniAgentsListHtml(false);
+
+    const wc = countWords(state.draft.text);
+    const maxW = Number(state.input.maxWords) || 65;
+    const wcText = wc + ' / ' + maxW + ' kata';
+    const wcClass = 'status-chip ' + (wc > maxW ? 'chip-fail' : 'chip-neutral');
+
+    const s2Wc = document.getElementById('s2-word-count');
+    s2Wc.textContent = wcText;
+    s2Wc.className = wcClass;
+    document.getElementById('s2-draft-text').textContent = state.draft.text;
+
+    const inp = state.input;
+    const chips = [
+      TOPIC_LABELS[inp.topic] || inp.topic,
+      getGradeLabel(inp.grade),
+      'Level ' + inp.difficulty,
+      'Minat: ' + getActiveKeyword(inp)
+    ];
+    document.getElementById('s2-chips').innerHTML = chips.map(function (c) {
+      return '<span class="status-chip chip-neutral">' + escapeHtml(c) + '</span>';
+    }).join('');
+
+    const s3Wc = document.getElementById('s3-word-count');
+    s3Wc.textContent = wcText;
+    s3Wc.className = wcClass;
+    document.getElementById('s3-draft-text').textContent = state.draft.text;
+    document.getElementById('s3-answer').textContent = state.symbolicAnchor.answerDisplay;
+
+    document.getElementById('s4-answer').textContent = state.symbolicAnchor.answerDisplay;
+    document.getElementById('s4-agents-mini').innerHTML = buildMiniAgentsListHtml(true);
+
+    const prevBtn = document.getElementById('btn-stage-prev');
+    const nextBtn = document.getElementById('btn-stage-next');
+    const nextLabel = document.getElementById('stage-next-label');
+    const indicator = document.getElementById('stage-nav-indicator');
+
+    const stage = Math.min(4, Math.max(1, state.activeStage));
+    indicator.textContent = 'Tahap ' + stage + ' dari 5';
+    prevBtn.disabled = stage === 1;
+
+    const nextTitles = {
+      1: 'Lanjut ke Symbolic & Draf',
+      2: 'Lanjut ke Evaluasi 4 Agen',
+      3: 'Lanjut ke Kurasi Guru',
+      4: 'Terbitkan ke Mode Siswa'
+    };
+    nextLabel.textContent = nextTitles[stage] || 'Lanjut';
+    nextBtn.disabled = stage === 4 && (state.curation.needsReverification || !state.evaluation.allPassed);
   }
 
   function renderSymbolicSection() {
@@ -2112,6 +2256,7 @@
     renderSymbolicSection();
     renderAgentSection();
     renderCurationSection(false);
+    renderCompanionPanels();
     if (state.activeView === 'student') {
       renderStudentView();
     }
@@ -2142,6 +2287,55 @@
     };
   }
 
+  function hasFormChanges() {
+    const inp = state.input;
+    if (document.getElementById('input-topic').value !== inp.topic) return true;
+    if (inp.topic === 'linear') {
+      const lc = parseFlexibleNumber(document.getElementById('lin-c').value, false);
+      const lm = parseFlexibleNumber(document.getElementById('lin-m').value, false);
+      const lx = parseFlexibleNumber(document.getElementById('lin-x').value, false);
+      if (Math.abs(lc - inp.linear.c) > 1e-4) return true;
+      if (Math.abs(lm - inp.linear.m) > 1e-4) return true;
+      if (Math.abs(lx - inp.linear.x) > 1e-4) return true;
+      if (document.getElementById('lin-op').value !== inp.linear.op) return true;
+      if (document.getElementById('lin-currency').value !== inp.linear.currency) return true;
+    } else if (inp.topic === 'spldv') {
+      const fields = [
+        ['spldv-a1', inp.spldv.a1], ['spldv-b1', inp.spldv.b1], ['spldv-c1', inp.spldv.c1],
+        ['spldv-a2', inp.spldv.a2], ['spldv-b2', inp.spldv.b2], ['spldv-c2', inp.spldv.c2]
+      ];
+      for (let i = 0; i < fields.length; i++) {
+        if (Math.abs(parseFlexibleNumber(document.getElementById(fields[i][0]).value, false) - fields[i][1]) > 1e-4) {
+          return true;
+        }
+      }
+    } else {
+      if (document.getElementById('geo-obj1').value.trim() !== inp.geometry.obj1Name) return true;
+      if (document.getElementById('geo-obj2').value.trim() !== inp.geometry.obj2Name) return true;
+      if (document.getElementById('geo-unit').value !== inp.geometry.unit) return true;
+      const gp1 = parseFlexibleNumber(document.getElementById('geo-p1').value, true);
+      const gl1 = parseFlexibleNumber(document.getElementById('geo-l1').value, true);
+      const gp2 = parseFlexibleNumber(document.getElementById('geo-p2').value, true);
+      const gl2 = parseFlexibleNumber(document.getElementById('geo-l2').value, true);
+      if (Math.abs(gp1 - inp.geometry.p1) > 1e-4 || Math.abs(gl1 - inp.geometry.l1) > 1e-4) return true;
+      if (Math.abs(gp2 - inp.geometry.p2) > 1e-4 || Math.abs(gl2 - inp.geometry.l2) > 1e-4) return true;
+    }
+    if (document.getElementById('input-hobby-keyword').value !== inp.hobbyKeyword) return true;
+    if (document.getElementById('input-student-name').value.trim() !== inp.studentName) return true;
+    if (document.getElementById('input-grade').value !== inp.grade) return true;
+    if (document.getElementById('input-difficulty').value !== inp.difficulty) return true;
+    if (Number(document.getElementById('input-max-words').value) !== inp.maxWords) return true;
+    return false;
+  }
+
+  function applyPendingFormChanges() {
+    if (hasFormChanges()) {
+      markCustomMode();
+      readFormInputsIntoState();
+      regenerateFromInputs();
+    }
+  }
+
   function bindEvents() {
     // Preset Toolbar
     document.querySelectorAll('.preset-btn').forEach(function (btn) {
@@ -2156,18 +2350,30 @@
       });
     });
 
-    // View Tabs
-    document.getElementById('btn-view-teacher').addEventListener('click', function () {
-      switchView('teacher');
+    // Layout Mode Switcher (Guided vs All Panels Overview)
+    document.getElementById('btn-layout-guided').addEventListener('click', function () {
+      state.layoutMode = 'guided';
+      if (state.activeView !== 'teacher') {
+        switchView('teacher');
+      } else {
+        setActiveStage(Math.min(4, Math.max(1, state.activeStage)));
+      }
     });
-    document.getElementById('btn-view-student').addEventListener('click', function () {
-      switchView('student');
+
+    document.getElementById('btn-layout-overview').addEventListener('click', function () {
+      state.layoutMode = 'overview';
+      if (state.activeView !== 'teacher') {
+        switchView('teacher');
+      } else {
+        setActiveStage(Math.min(4, Math.max(1, state.activeStage)));
+      }
     });
+
     document.getElementById('btn-back-teacher').addEventListener('click', function () {
       switchView('teacher');
     });
 
-    // Stepper
+    // Stepper Navigation
     document.querySelectorAll('.step-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const stage = Number(btn.dataset.stage);
@@ -2175,21 +2381,53 @@
           switchView('student');
           return;
         }
+        if (state.activeStage === 1 && stage !== 1) {
+          applyPendingFormChanges();
+        }
         if (state.activeView !== 'teacher') {
           switchView('teacher');
         }
         setActiveStage(stage);
-        const panelMap = {
-          1: 'panel-input',
-          2: 'panel-symbolic',
-          3: 'panel-agents',
-          4: 'panel-curation'
-        };
-        const panelEl = document.getElementById(panelMap[stage]);
-        if (panelEl) {
-          panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (state.layoutMode === 'overview') {
+          const panelMap = {
+            1: 'panel-input',
+            2: 'panel-symbolic',
+            3: 'panel-agents',
+            4: 'panel-curation'
+          };
+          const panelEl = document.getElementById(panelMap[stage]);
+          if (panelEl) {
+            panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         }
       });
+    });
+
+    // Guided Stage 1 Companion CTAs & Bottom Nav Footer
+    document.getElementById('btn-s1-next').addEventListener('click', function () {
+      applyPendingFormChanges();
+      setActiveStage(2);
+    });
+
+    document.getElementById('btn-s1-jump-eval').addEventListener('click', function () {
+      applyPendingFormChanges();
+      setActiveStage(3);
+    });
+
+    document.getElementById('btn-stage-prev').addEventListener('click', function () {
+      const prevStage = Math.max(1, state.activeStage - 1);
+      setActiveStage(prevStage);
+    });
+
+    document.getElementById('btn-stage-next').addEventListener('click', function () {
+      if (state.activeStage === 1) {
+        applyPendingFormChanges();
+        setActiveStage(2);
+      } else if (state.activeStage === 4) {
+        switchView('student');
+      } else {
+        setActiveStage(state.activeStage + 1);
+      }
     });
 
     // Modul A: Topic switch & Object Preset & Hobby Preset

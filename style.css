@@ -121,7 +121,7 @@ h3 {
 }
 
 .header-inner {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -149,7 +149,7 @@ h3 {
   max-width: 70ch;
 }
 
-.mode-switcher {
+.layout-switcher {
   display: inline-flex;
   background-color: var(--bg-subtle);
   padding: 0.25rem;
@@ -242,29 +242,65 @@ h3 {
 }
 
 .stepper-inner {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
 .step-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 40px;
-  padding: 0.4rem 0.85rem;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0.4rem 0.75rem;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-control);
   background-color: var(--bg-surface);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
+  min-width: 0;
+  text-align: left;
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.step-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-pill {
+  margin-left: auto;
+  padding: 0.12rem 0.45rem;
+  border-radius: var(--radius-badge);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.step-pill.pill-pass {
+  background-color: var(--pass-bg);
+  color: var(--pass-text);
+  border: 1px solid var(--pass-border);
+}
+
+.step-pill.pill-fail {
+  background-color: var(--fail-bg);
+  color: var(--fail-text);
+  border: 1px solid var(--fail-border);
+}
+
+.step-pill.pill-warn {
+  background-color: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
 }
 
 .step-btn:hover {
@@ -296,6 +332,7 @@ h3 {
   font-size: 0.8125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 .step-btn.is-active .step-num {
@@ -310,7 +347,7 @@ h3 {
 
 /* Global Notice */
 .global-notice {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0.875rem auto 0;
   padding: 0.75rem 1.25rem;
   background-color: var(--warn-bg);
@@ -322,26 +359,227 @@ h3 {
   font-size: 0.9375rem;
 }
 
-/* Main Shell & Workbench Grid */
+/* Main Shell & Guided/Overview Teacher Layouts */
 .main-shell {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 1.25rem;
 }
 
-.workbench-grid {
+.teacher-view[hidden] {
+  display: none;
+}
+
+.stage-section > .panel {
+  min-width: 0;
+}
+
+/* Guided Mode: one clean 2-column stage at a time */
+.teacher-view[data-layout="guided"] .stage-section {
+  display: none;
+}
+
+.teacher-view[data-layout="guided"][data-stage="1"] #stage-1,
+.teacher-view[data-layout="guided"][data-stage="3"] #stage-3,
+.teacher-view[data-layout="guided"][data-stage="4"] #stage-4 {
   display: grid;
-  grid-template-columns: minmax(0, 44%) minmax(0, 56%);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: 1.25rem;
   align-items: start;
 }
 
-.col-left,
-.col-right {
-  min-width: 0;
+.teacher-view[data-layout="guided"][data-stage="2"] #stage-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Overview Mode: all 4 core modules in clean 2-column grid */
+.teacher-view[data-layout="overview"] [data-guided-only="true"] {
+  display: none;
+}
+
+.teacher-view[data-layout="overview"] .stages-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.teacher-view[data-layout="overview"] .stage-section {
+  display: contents;
+}
+
+/* Companion Panels & Stage Navigation Footer */
+.companion-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+.brief-box {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-control);
+  background-color: #FAFBFD;
+  border: 1px solid var(--border-subtle);
+}
+
+.brief-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.brief-desc {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.summary-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-control);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+}
+
+.summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 0.75rem;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.summary-formula {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.summary-answer {
+  font-family: var(--font-mono);
+  font-size: 1.0625rem;
+  color: var(--brand-soft-text);
+}
+
+.mini-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.mini-heading {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.mini-agent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.mini-agent-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-subtle);
+  border-left-width: 4px;
+  background-color: var(--bg-surface);
+}
+
+.mini-agent-item.status-pass {
+  border-left-color: var(--pass-border);
+  background-color: #F7FDFB;
+}
+
+.mini-agent-item.status-fail {
+  border-left-color: var(--fail-border);
+  background-color: #FEF7F7;
+}
+
+.mini-agent-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.mini-agent-name {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mini-agent-detail {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.companion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.draft-preview-card {
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--radius-control);
+  background-color: #FAFBFD;
+  border: 1px solid var(--border-subtle);
+}
+
+.draft-preview-text {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.companion-note {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.stage-nav-footer {
+  margin-top: 1.25rem;
+  padding: 0.9rem 1.15rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.stage-nav-indicator {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Panels */
@@ -1188,7 +1426,7 @@ textarea {
 }
 
 .footer-inner {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -1210,7 +1448,16 @@ textarea {
 
 /* Responsive Breakpoints */
 @media (max-width: 1023px) {
-  .workbench-grid {
+  .stepper-inner {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .teacher-view[data-layout="guided"][data-stage="1"] #stage-1,
+  .teacher-view[data-layout="guided"][data-stage="2"] #stage-2,
+  .teacher-view[data-layout="guided"][data-stage="3"] #stage-3,
+  .teacher-view[data-layout="guided"][data-stage="4"] #stage-4,
+  .teacher-view[data-layout="overview"] .stages-container {
     grid-template-columns: 1fr;
   }
 }
@@ -1218,7 +1465,8 @@ textarea {
 @media (max-width: 639px) {
   .app-header,
   .workflow-stepper,
-  .main-shell {
+  .main-shell,
+  .app-footer {
     padding-left: 0.875rem;
     padding-right: 0.875rem;
   }
@@ -1235,13 +1483,19 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .mode-switcher {
+  .layout-switcher {
     width: 100%;
   }
 
   .mode-tab {
     flex: 1 1 50%;
     justify-content: center;
+  }
+
+  .stage-nav-footer {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
   }
 }
 

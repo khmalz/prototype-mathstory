@@ -24,23 +24,23 @@
       <div class="header-top">
         <div class="brand-block">
           <h1>MathPersona <span translate="no">PBK</span></h1>
-          <p class="subtitle">Simulasi Alur Kendali Berlapis dan <span translate="no">Teacher-in-the-Loop</span> (Kelompok 10, Ilmu Komputer UNJ)</p>
+          <p class="subtitle">Simulasi Kendali Berlapis untuk Personalisasi Soal Cerita Matematika</p>
         </div>
 
-        <div class="mode-switcher" role="tablist" aria-label="Mode Tampilan Aplikasi">
-          <button type="button" id="btn-view-teacher" class="mode-tab is-active" role="tab" aria-selected="true" aria-controls="view-teacher">
-            <span class="btn-icon" data-icon="sliders" aria-hidden="true"></span>
-            <span>Workbench Guru</span>
+        <div class="layout-switcher" role="group" aria-label="Mode Tata Letak">
+          <button type="button" id="btn-layout-guided" class="mode-tab is-active" aria-pressed="true">
+            <span class="btn-icon" data-icon="layers" aria-hidden="true"></span>
+            <span>Bertahap</span>
           </button>
-          <button type="button" id="btn-view-student" class="mode-tab" role="tab" aria-selected="false" aria-controls="view-student">
-            <span class="btn-icon" data-icon="eye" aria-hidden="true"></span>
-            <span>Mode Pratinjau Siswa</span>
+          <button type="button" id="btn-layout-overview" class="mode-tab" aria-pressed="false">
+            <span class="btn-icon" data-icon="sliders" aria-hidden="true"></span>
+            <span>Semua Panel</span>
           </button>
         </div>
       </div>
 
       <div class="preset-bar" role="group" aria-label="Preset Kasus Demo">
-        <span class="preset-bar-label">Preset Demo Proposal:</span>
+        <span class="preset-bar-label">Preset Demo:</span>
         <div class="preset-group">
           <button type="button" id="preset-case1" class="preset-btn is-active" data-preset="case1">
             Kasus 1: Linear (Kedai Es Teh)
@@ -64,19 +64,21 @@
       </button>
       <button type="button" class="step-btn" data-stage="2">
         <span class="step-num">2</span>
-        <span class="step-text">Symbolic dan Draf</span>
+        <span class="step-text">Symbolic &amp; Draf</span>
       </button>
       <button type="button" class="step-btn" data-stage="3">
         <span class="step-num">3</span>
         <span class="step-text">Evaluasi 4 Agen</span>
+        <span id="step-badge-3" class="step-pill pill-pass">4/4</span>
       </button>
       <button type="button" class="step-btn" data-stage="4">
         <span class="step-num">4</span>
         <span class="step-text">Kurasi Guru</span>
+        <span id="step-badge-4" class="step-pill pill-pass">Siap</span>
       </button>
       <button type="button" class="step-btn" data-stage="5">
         <span class="step-num">5</span>
-        <span class="step-text">Pratinjau Siswa</span>
+        <span class="step-text">Mode Siswa</span>
       </button>
     </div>
   </nav>
@@ -84,12 +86,11 @@
   <div id="global-notice" class="global-notice" role="status" aria-live="polite" hidden></div>
 
   <main id="main-content" class="main-shell">
-    <!-- VIEW 1: TEACHER WORKBENCH -->
-    <section id="view-teacher" class="teacher-view" role="tabpanel" aria-labelledby="btn-view-teacher">
-      <div class="workbench-grid">
-        <!-- LEFT COLUMN: MODUL A & MODUL B -->
-        <div class="col-left">
-          <!-- MODUL A: PARAMETER SISTEM -->
+    <!-- TEACHER WORKBENCH (SUPPORTS GUIDED STAGE-BY-STAGE & 2-COLUMN OVERVIEW) -->
+    <section id="view-teacher" class="teacher-view" data-layout="guided" data-stage="1" aria-label="Area Kerja Guru">
+      <div class="stages-container">
+        <!-- STAGE 1: MODUL A + SCENARIO BRIEF -->
+        <div id="stage-1" class="stage-section" data-stage-section="1">
           <section id="panel-input" class="panel" aria-labelledby="heading-input">
             <div class="panel-header">
               <div class="panel-title-group">
@@ -300,7 +301,49 @@
             </form>
           </section>
 
-          <!-- MODUL B: SYMBOLIC GROUNDING & CONSTRAINT PROMPT -->
+          <aside id="stage1-summary" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s1-summary">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Ringkasan Skenario</span>
+                <h2 id="heading-s1-summary">Pratinjau Target &amp; Status Awal</h2>
+              </div>
+            </div>
+
+            <div class="brief-box">
+              <h3 id="s1-case-title" class="brief-title">Kasus 1 — Aljabar Linear Dua Langkah</h3>
+              <p id="s1-case-desc" class="brief-desc"></p>
+            </div>
+
+            <div class="summary-metric-card">
+              <div class="summary-row">
+                <span class="summary-label">Model Rumus Target</span>
+                <div id="s1-formula" class="summary-formula tabular-nums" translate="no"></div>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Kunci Jawaban Simbolik</span>
+                <strong id="s1-answer" class="summary-answer tabular-nums" translate="no">—</strong>
+              </div>
+            </div>
+
+            <div class="mini-section">
+              <h3 class="mini-heading">Status Awal 4 Agen Evaluator</h3>
+              <div id="s1-agents-mini" class="mini-agent-list" aria-live="polite"></div>
+            </div>
+
+            <div class="companion-actions">
+              <button type="button" id="btn-s1-next" class="btn btn-primary">
+                <span>Bangkitkan Draf &amp; Lihat Penjangkaran</span>
+                <span class="btn-icon" data-icon="arrowRight" aria-hidden="true"></span>
+              </button>
+              <button type="button" id="btn-s1-jump-eval" class="btn btn-secondary">
+                <span>Langsung ke Evaluasi 4 Agen</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+
+        <!-- STAGE 2: MODUL B (SYMBOLIC + PROMPT) & DRAFT PREVIEW -->
+        <div id="stage-2" class="stage-section" data-stage-section="2">
           <section id="panel-symbolic" class="panel symbolic-panel" aria-labelledby="heading-symbolic">
             <div class="panel-header symbolic-header">
               <div class="panel-title-group">
@@ -335,11 +378,30 @@
               <strong id="symbolic-answer" class="symbolic-answer-value" translate="no">—</strong>
             </div>
           </section>
+
+          <aside id="stage2-draft-preview" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s2-draft">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Hasil Pembangkitan</span>
+                <h2 id="heading-s2-draft">Draf Soal Cerita Awal</h2>
+              </div>
+              <span id="s2-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
+            </div>
+
+            <div id="s2-chips" class="student-chips"></div>
+
+            <div class="draft-preview-card">
+              <p id="s2-draft-text" class="draft-preview-text"></p>
+            </div>
+
+            <p class="companion-note">
+              Logika aritmetika dikunci di Python Anchor (Langkah A), sedangkan narasi disusun mengikuti aturan Prompt Kendala (Langkah B) tanpa menyisipkan angka dekoratif.
+            </p>
+          </aside>
         </div>
 
-        <!-- RIGHT COLUMN: MODUL C & MODUL D -->
-        <div class="col-right">
-          <!-- MODUL C: EVALUASI 4 AGEN OTONOM -->
+        <!-- STAGE 3: MODUL C (4 AGENTS + REFINEMENT) & LIVE DRAFT CONTEXT -->
+        <div id="stage-3" class="stage-section" data-stage-section="3">
           <section id="panel-agents" class="panel" aria-labelledby="heading-agents">
             <div class="panel-header">
               <div class="panel-title-group">
@@ -373,7 +435,34 @@
             </div>
           </section>
 
-          <!-- MODUL D: KURASI GURU -->
+          <aside id="stage3-draft-context" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s3-context">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Draf Terkini</span>
+                <h2 id="heading-s3-context">Teks Soal yang Dievaluasi</h2>
+              </div>
+              <span id="s3-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
+            </div>
+
+            <div class="draft-preview-card">
+              <p id="s3-draft-text" class="draft-preview-text"></p>
+            </div>
+
+            <div class="summary-metric-card">
+              <div class="summary-row">
+                <span class="summary-label">Kunci Jawaban Simbolik Saat Ini</span>
+                <strong id="s3-answer" class="summary-answer tabular-nums" translate="no">—</strong>
+              </div>
+            </div>
+
+            <p class="companion-note">
+              Klik <strong>Jalankan Refinement Agent</strong> jika ada agen berstatus GAGAL untuk melihat perbaikan teks dan parameter secara langsung di panel ini.
+            </p>
+          </aside>
+        </div>
+
+        <!-- STAGE 4: MODUL D (TEACHER CURATION) & LIVE VERIFICATION STATUS -->
+        <div id="stage-4" class="stage-section" data-stage-section="4">
           <section id="panel-curation" class="panel" aria-labelledby="heading-curation">
             <div class="panel-header">
               <div class="panel-title-group">
@@ -420,17 +509,55 @@
               </button>
             </div>
           </section>
+
+          <aside id="stage4-live-check" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s4-check">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="module-tag">Hasil Verifikasi</span>
+                <h2 id="heading-s4-check">Audit Agen &amp; Kunci Jawaban</h2>
+              </div>
+            </div>
+
+            <div class="summary-metric-card">
+              <div class="summary-row">
+                <span class="summary-label">Kunci Jawaban Tersinkron</span>
+                <strong id="s4-answer" class="summary-answer tabular-nums" translate="no">—</strong>
+              </div>
+            </div>
+
+            <div class="mini-section">
+              <h3 class="mini-heading">Status 4 Agen Pasca-Suntingan</h3>
+              <div id="s4-agents-mini" class="mini-agent-list" aria-live="polite"></div>
+            </div>
+
+            <p class="companion-note">
+              Setiap perubahan angka atau mata uang di editor akan mengunci tombol terbit sampai Anda menekan <strong>Verifikasi Ulang</strong>.
+            </p>
+          </aside>
         </div>
+      </div>
+
+      <!-- GUIDED BOTTOM STAGE NAVIGATION BAR -->
+      <div id="stage-nav-footer" class="stage-nav-footer" data-guided-only="true">
+        <button type="button" id="btn-stage-prev" class="btn btn-secondary">
+          <span class="btn-icon" data-icon="arrowLeft" aria-hidden="true"></span>
+          <span>Tahap Sebelumnya</span>
+        </button>
+        <span id="stage-nav-indicator" class="stage-nav-indicator">Tahap 1 dari 5</span>
+        <button type="button" id="btn-stage-next" class="btn btn-primary">
+          <span id="stage-next-label">Lanjut ke Tahap 2</span>
+          <span class="btn-icon" data-icon="arrowRight" aria-hidden="true"></span>
+        </button>
       </div>
     </section>
 
-    <!-- VIEW 2: STUDENT EXERCISE VIEW -->
-    <section id="view-student" class="student-view" role="tabpanel" aria-labelledby="btn-view-student" hidden>
+    <!-- STAGE 5 / STUDENT EXERCISE VIEW -->
+    <section id="view-student" class="student-view" aria-label="Mode Pratinjau Siswa" hidden>
       <div class="student-shell">
         <div class="student-topbar">
           <button type="button" id="btn-back-teacher" class="btn btn-ghost">
             <span class="btn-icon" data-icon="arrowLeft" aria-hidden="true"></span>
-            <span>Kembali ke Workbench Guru</span>
+            <span>Kembali ke Kurasi Guru</span>
           </button>
           <div id="student-chips" class="student-chips"></div>
         </div>
@@ -485,14 +612,8 @@
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <p class="footer-title">
-        <strong>Kelompok 10 — Program Studi Ilmu Komputer, FMIPA Universitas Negeri Jakarta (2026)</strong>
-      </p>
-      <p class="footer-meta">
-        Disusun oleh: Ananda Giwank Abhinaya (1313624038), Khairul Akmal (1313624017), Sayyied Ridho Arhami (1313624065) — Dosen Pengampu: Dr. Ria Arafiyah, M.Si.
-      </p>
       <p class="footer-note">
-        Simulasi deterministik alur kendali empat lapis Bab 3 Proposal (Input Terstruktur, Penjangkaran Simbolik &amp; Prompt Kendala, Evaluasi Multi-Agen + Refinement, dan Kurasi Guru).
+        MathPersona PBK — Simulasi deterministik kendali empat lapis personalisasi soal cerita matematika (tanpa API eksternal, siap buka offline).
       </p>
     </div>
   </footer>

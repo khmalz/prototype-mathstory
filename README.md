@@ -1,4 +1,4 @@
-# MathPersona PBK
+# RumusJadiCerita PBK
 
 Aplikasi web statis untuk mengubah rumus matematika jadi soal cerita sesuai hobi siswa — lengkap dengan cek kualitas otomatis, edit manual guru, dan mode latihan siswa.
 

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#F4F7FB">
-  <title>MathPersona PBK — Prototipe Sistem Personalisasi Soal Cerita Matematika</title>
+  <meta name="theme-color" content="#F5F7F6">
+  <title>RumusJadiCerita — Generator Soal Cerita Matematika Berbasis Hobi</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css" integrity="sha384-WwGtaC6ywCHxA5cstpj/3+xIZvTez8dq2IcBQaXRkenHZ7FVVq1ZROtURwfbtTlG" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.js" integrity="sha384-a1WQdjRj162i159OYq041X6I4K8NenkrI09LlPmiHg0YOb7CR+wJOraXwK9abpnE" crossorigin="anonymous"></script>
@@ -23,7 +23,7 @@
     <div class="header-inner">
       <div class="header-top">
         <div class="brand-block">
-          <h1>MathPersona <span translate="no">PBK</span></h1>
+          <h1>RumusJadiCerita <span translate="no">PBK</span></h1>
           <p class="subtitle">Ubah rumus matematika jadi soal cerita sesuai hobi siswa, lengkap sama cek otomatis</p>
         </div>
 
@@ -59,25 +59,25 @@
   <nav class="workflow-stepper" aria-label="Alur Kerja">
     <div class="stepper-inner">
       <button type="button" class="step-btn is-active" data-stage="1" aria-current="step">
-        <span class="step-num">1</span>
+        <span class="step-num">01</span>
         <span class="step-text">Atur Soal</span>
       </button>
       <button type="button" class="step-btn" data-stage="2">
-        <span class="step-num">2</span>
+        <span class="step-num">02</span>
         <span class="step-text">Rumus &amp; Draf</span>
       </button>
       <button type="button" class="step-btn" data-stage="3">
-        <span class="step-num">3</span>
+        <span class="step-num">03</span>
         <span class="step-text">Cek 4 Agen</span>
         <span id="step-badge-3" class="step-pill pill-pass">4/4</span>
       </button>
       <button type="button" class="step-btn" data-stage="4">
-        <span class="step-num">4</span>
+        <span class="step-num">04</span>
         <span class="step-text">Edit Guru</span>
         <span id="step-badge-4" class="step-pill pill-pass">Siap</span>
       </button>
       <button type="button" class="step-btn" data-stage="5">
-        <span class="step-num">5</span>
+        <span class="step-num">05</span>
         <span class="step-text">Coba Siswa</span>
       </button>
     </div>
@@ -94,7 +94,7 @@
           <section id="panel-input" class="panel" aria-labelledby="heading-input">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Modul A</span>
+                <span class="module-code">Modul A</span>
                 <h2 id="heading-input">Atur Soal &amp; Minat</h2>
               </div>
               <span id="active-preset-chip" class="status-chip chip-neutral">Contoh: Kasus 1</span>
@@ -293,7 +293,7 @@
               </fieldset>
 
               <div class="form-actions">
-                <button type="button" id="btn-generate" class="btn btn-primary btn-full">
+                <button type="button" id="btn-generate" class="btn btn-secondary btn-full">
                   <span class="btn-icon" data-icon="sparkles" aria-hidden="true"></span>
                   <span>Buat Ulang Soal</span>
                 </button>
@@ -304,7 +304,6 @@
           <aside id="stage1-summary" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s1-summary">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Info Singkat</span>
                 <h2 id="heading-s1-summary">Gambaran Soal &amp; Hasil Awal</h2>
               </div>
             </div>
@@ -347,7 +346,7 @@
           <section id="panel-symbolic" class="panel symbolic-panel" aria-labelledby="heading-symbolic">
             <div class="panel-header symbolic-header">
               <div class="panel-title-group">
-                <span class="module-tag module-tag-dark">Modul B</span>
+                <span class="module-code module-code-dark">Modul B</span>
                 <h2 id="heading-symbolic">Rumus Kunci &amp; Aturan Soal</h2>
               </div>
               <div class="code-tabs" role="tablist" aria-label="Pilih Kode Python atau Aturan Prompt">
@@ -382,7 +381,6 @@
           <aside id="stage2-draft-preview" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s2-draft">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Hasil Generate</span>
                 <h2 id="heading-s2-draft">Draf Soal Cerita</h2>
               </div>
               <span id="s2-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
@@ -405,7 +403,7 @@
           <section id="panel-agents" class="panel" aria-labelledby="heading-agents">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Modul C</span>
+                <span class="module-code">Modul C</span>
                 <h2 id="heading-agents">Cek Kualitas Otomatis (4 Agen)</h2>
               </div>
               <div class="agents-meta">
@@ -438,7 +436,6 @@
           <aside id="stage3-draft-context" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s3-context">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Draf Aktif</span>
                 <h2 id="heading-s3-context">Soal yang Lagi Dicek</h2>
               </div>
               <span id="s3-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
@@ -466,7 +463,7 @@
           <section id="panel-curation" class="panel" aria-labelledby="heading-curation">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Modul D</span>
+                <span class="module-code">Modul D</span>
                 <h2 id="heading-curation">Edit Guru (Biar Makin Pas)</h2>
               </div>
               <span id="editor-word-count" class="status-chip chip-neutral">0 / 65 kata</span>
@@ -513,7 +510,6 @@
           <aside id="stage4-live-check" class="panel companion-panel" data-guided-only="true" aria-labelledby="heading-s4-check">
             <div class="panel-header">
               <div class="panel-title-group">
-                <span class="module-tag">Hasil Cek</span>
                 <h2 id="heading-s4-check">Status Agen &amp; Jawaban</h2>
               </div>
             </div>
@@ -544,7 +540,7 @@
           <span>Sebelumnya</span>
         </button>
         <span id="stage-nav-indicator" class="stage-nav-indicator">Tahap 1 dari 5</span>
-        <button type="button" id="btn-stage-next" class="btn btn-primary">
+        <button type="button" id="btn-stage-next" class="btn btn-nav-next">
           <span id="stage-next-label">Lanjut: Rumus &amp; Draf</span>
           <span class="btn-icon" data-icon="arrowRight" aria-hidden="true"></span>
         </button>
@@ -564,7 +560,6 @@
 
         <article class="student-card" aria-labelledby="student-heading">
           <div class="student-card-header">
-            <span class="module-tag">Mode Siswa</span>
             <h2 id="student-heading">Yuk, Kerjakan Soal Ini!</h2>
           </div>
 
@@ -613,7 +608,7 @@
   <footer class="app-footer">
     <div class="footer-inner">
       <p class="footer-note">
-        MathPersona PBK — Simulasi generator soal cerita matematika sesuai hobi siswa (jalan 100% offline tanpa API eksternal).
+        RumusJadiCerita PBK — Simulasi generator soal cerita matematika sesuai hobi siswa (jalan 100% offline tanpa API eksternal).
       </p>
     </div>
   </footer>
